@@ -8,7 +8,8 @@
 
 <script>
 // import selectTree from './select-Tree.vue';
-import selectTree1 from './select-tree1.vue';
+// import selectTree1 from './select-tree1.vue';
+import selectTree1 from './select-tree2.vue';
 export default {
   name: 'test-comp',
   components: {
