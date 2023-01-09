@@ -14,7 +14,7 @@ export default {
   name: 'select-tree',
   model: {
     prop: 'value',
-    event: 'input',
+    event: 'change',
   },
   props: {
     value: {
@@ -34,10 +34,13 @@ export default {
         label: 'label',
       },
       selectList: [],
+      isManualSelect: false,
     };
   },
   computed: {
-
+    refTree() {
+      return this.$refs.tree;
+    }
   },
   watch: {
     value: {
@@ -50,9 +53,13 @@ export default {
     // 外界传值
     this.$watch('selectList', (newList) => {
       this.$emit('change', newList);
+      if (this.isManualSelect) {
+        this.isManualSelect = false;
+        return;
+      }
       this.$nextTick(() => {
         if (Array.isArray(newList)) {
-          this.$refs.tree?.setCheckedKeys(newList);
+          this.refTree?.setCheckedKeys(newList);
         }
       })
     }, { immediate: true })
@@ -61,20 +68,32 @@ export default {
     reset() {
       this.$emit('change', []);
     },
-    handleChecked(curObj, checkedObj) {
-      const flatNodes = this.flatNodeData(checkedObj.checkedNodes);
-      console.log(flatNodes)
-      this.selectList = flatNodes;
+    handleChecked(curObj) {
+      const curCheckedKeys = this.flatNodeKeys([curObj]);
+      const checkedKeys = this.refTree.getCheckedKeys(true);
+      // 选中状态
+      if (checkedKeys.length > this.selectList.length) {
+        if (curCheckedKeys.includes('全部')) {
+          return this.selectList = ['全部'];
+        } else if (checkedKeys.includes('全部')) {
+          return this.selectList = checkedKeys.filter(key => key !== '全部');
+        }
+      }  
+      // 取消状态
+      this.selectList = checkedKeys;
+      this.isManualSelect = true;
     },
-    flatNodeData(tarData) {
+    flatNodeKeys(tarData) {
       const res = [];
-      for (const item of tarData) {
-        if (!item.children) {
-          res.push(item.label);
+      for (const node of tarData) {
+        if (node.children) {
+          res.push(...this.flatNodeKeys(node.children));
+        } else {
+          res.push(node.label);
         }
       }
       return res;
-    },
+    }
   },
 };
 </script>
