@@ -6,7 +6,7 @@
 -->
 <template>
   <div id="app">
-    <Test labelId="exp" :text="text"/>
+    <Test :text="text" taskType="templateTask"/>
   </div>
 </template>
 
@@ -18,8 +18,10 @@
 // import Test from './components/check-detail-comp/LastTest.vue'
 // import Test from './components/check-detail-comp/Test1.vue'
 
-import Test from './components/multi-select-tree/test.vue';
-
+// import Test from './components/multi-select-tree/test.vue';
+// import Test from './components/custom-category/test.vue';
+// import Test from './components/form-builder-comp/test.vue';
+import Test from './components/drag-tabs/test.vue'; 
 export default {
   name: 'App',
   components: {
@@ -34,7 +36,10 @@ export default {
 </script>
 
 <style>
+html,body {
+  height: 100%;
+}
 #app {
-  
+  height: 100%;
 }
 </style>
