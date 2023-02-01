@@ -1,6 +1,13 @@
 <template>
   <div class="select-area">
-    <el-cascader-panel v-model="selectList" :options="options" :props="{ multiple: true}" @change="handleChange"></el-cascader-panel>
+    <el-cascader-panel ref="selectPaneRef" v-model="selectList" :options="options" :props="{ multiple: true, }" @change="handleChange"
+      @expand-change="handleExpandChange" size="mini">
+      <template slot-scope="{ node, data }">
+        <span v-if="node.isLeaf" @click="handleClick(node, data)">
+          {{ data.label }}
+        </span>
+      </template>
+    </el-cascader-panel>
   </div>
 </template>
 
@@ -16,28 +23,32 @@ export default {
         {
           value: 'zhinan',
           label: '指南',
-          multiple: false,
+          // 
           children: [
             {
               value: 'shejiyuanze',
               label: '设计原则',
-              multiple: false,
+              // 
               children: [
                 {
                   value: 'yizhi',
                   label: '一致',
+                  multiple: true,
                 },
                 {
                   value: 'fankui',
                   label: '反馈',
+                  multiple: true,
                 },
                 {
                   value: 'xiaolv',
                   label: '效率',
+                  multiple: true,
                 },
                 {
                   value: 'kekong',
                   label: '可控',
+                  multiple: true,
                 },
               ],
             },
@@ -60,7 +71,7 @@ export default {
         {
           value: 'zujian',
           label: '组件',
-          multiple: false,
+
           children: [
             {
               value: 'basic',
@@ -267,7 +278,7 @@ export default {
         {
           value: 'ziyuan',
           label: '资源',
-          multiple: false,
+
           children: [
             {
               value: 'axure',
@@ -284,14 +295,31 @@ export default {
           ],
         },
       ],
+      curRootPath: '',
+      preCheckedRootPath: ''
     };
   },
 
-  mounted() {},
+  mounted() { },
   watch: {},
   methods: {
-    handleChange(val) {
-      console.log(val);
+    handleChange() {
+      if (this.preCheckedRootPath && this.preCheckedRootPath !== this.curRootPath) {
+        // clear options and render transfer value
+        // debugger;
+        const nodes = this.$refs.selectPaneRef.getCheckedNodes();
+        console.log(nodes);
+        // this.selectList = val;
+      }
+      this.preCheckedRootPath = this.curRootPath;
+      /* const lastItems = this.selectList[this.selectList.length - 1].join('/');
+      const curItems = val. */
+    },
+    handleExpandChange (paths) {
+      this.curRootPath = paths.join('/');
+    },
+    handleClick() {
+      
     }
   },
 };
@@ -304,5 +332,32 @@ export default {
   background-color: #ffffff;
   border-radius: 2px;
   border: 1px solid #d9d9d9;
+
+  .el-cascader-panel {
+    width: 100%;
+
+    /deep/ .el-cascader-menu {
+      min-width: 100px;
+
+      .el-cascader-node {
+        padding-left: 8px;
+
+      }
+
+      &__wrap {
+        .el-checkbox {
+          display: none;
+        }
+      }
+
+      &:nth-of-type(3) {
+        .el-cascader-menu__wrap {
+          .el-checkbox {
+            display: block;
+          }
+        }
+      }
+    }
+  }
 }
 </style>

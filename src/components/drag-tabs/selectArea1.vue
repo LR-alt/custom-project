@@ -21,7 +21,7 @@
       </div>
       <div class="select-area__list">
         <template v-for="(list, index) in listData">
-          <ul v-if="list.length" class="list" :key="index">
+          <ul v-if="(list.length && curItemArr[index - 1]) || index === 0" class="list" :key="index">
             <li
               v-for="(item, inx) in filterList(list, index)"
               :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }"
@@ -103,8 +103,9 @@ export default {
       let i = 0;
       while (curData.length) {
         this.listData.push(curData);
-        const nextData = curData.find((item) => item.label === tagArr[i]) || curData[0];
-        if (nextData.children && nextData.children.length) {
+        const curItem = curData.find((item) => item.label === tagArr[i])
+        const nextData = curItem || curData[0];
+        if (curItem && curItem.children && curItem.children.length) {
           this.curItemArr.push(nextData);
         }
         curData = nextData.children || [];
@@ -122,7 +123,11 @@ export default {
       }
     },
     handleClkItem(item, index) {
-      this.$set(this.curItemArr, index, item);
+      if (index === 0) {
+        this.curItemArr = [item]
+      } else {
+         this.$set(this.curItemArr, index, item);
+      }
       this.updateNextLists(item, index + 1);
     },
     handleItemChange(item, index) {

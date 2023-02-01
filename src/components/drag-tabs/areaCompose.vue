@@ -1,13 +1,19 @@
+<!--
+ * @Author: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @Date: 2023-02-01 20:56:57
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2023-02-01 23:16:45
+ * @FilePath: \.leetcodee:\componyProject\element-comps\elementui-common-comps\src\components\drag-tabs\areaCompose.vue
+ * @Description: 
+ * 
+ * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
+-->
 <template>
   <div class="area-select">
-    <!-- <selectArea
+    <selectArea
       :checkedData="checkedData"
       :selectOps="selectOps"
       @updateList="updateCheckedList"
-      style="margin-right: 8px"
-    /> -->
-    <selectArea
-     
       style="margin-right: 8px"
     />
     <selectedLabels :tagData="checkedData" @deleteTag="deleteTag" />
@@ -15,8 +21,8 @@
 </template>
 
 <script>
-// import selectArea from './selectArea1.vue';
-import selectArea from './testcascader.vue';
+import selectArea from './selectArea1.vue';
+// import selectArea from './testcascader.vue';
 import selectedLabels from './selectedLabels.vue';
 export default {
   name: 'area-select',
