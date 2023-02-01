@@ -4,39 +4,28 @@
     <div class="select-area__body">
       <div class="select-area__search">
         <el-input v-model="searchVal" :placeholder="`搜索${selectVal}`">
-          <el-select
-            v-if="selectOps.length"
-            v-model="selectVal"
-            slot="prepend"
-            placeholder="请选择"
-          >
-            <el-option
-              v-for="opt in selectOps"
-              :key="opt.label"
-              :value="opt.value"
-              :label="opt.label"
-            />
+          <el-select v-if="selectOps.length" v-model="selectVal" slot="prepend" placeholder="请选择">
+            <el-option v-for="opt in selectOps" :key="opt.label" :value="opt.value" :label="opt.label" />
           </el-select>
         </el-input>
       </div>
       <div class="select-area__list">
         <template v-for="(list, index) in listData">
-          <ul v-if="(list.length && curItemArr[index - 1]) || index === 0" class="list" :key="index">
-            <li
-              v-for="(item, inx) in filterList(list, index)"
-              :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }"
-              :key="`${item.label}${inx}`"
-              @click="handleClkItem(item, index)"
-            >
-              <template v-if="index < listData.length - 1">
-                <span>{{ item.label }}</span>
-                <span>{{ '>' }}</span>
-              </template>
-              <div v-else style="padding-left: 12px">
-                <el-checkbox v-model="item.checked" @change="() => handleItemChange(item, index)" />
-                {{ item.label }}
-              </div>
-            </li>
+          <ul v-if="list.length" class="list" :key="index">
+            <template v-if="index === 0 || curItemArr[index - 1]">
+              <li v-for="(item, inx) in filterList(list, index)"
+                :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }"
+                :key="`${item.label}${inx}`" @click="handleClkItem(item, index)">
+                <template v-if="index < listData.length - 1">
+                  <span>{{ item.label }}</span>
+                  <span>{{ '>' }}</span>
+                </template>
+                <div v-else style="padding-left: 12px">
+                  <el-checkbox v-model="item.checked" @change="() => handleItemChange(item, index)" />
+                  {{ item.label }}
+                </div>
+              </li>
+            </template>
           </ul>
         </template>
       </div>
@@ -126,7 +115,7 @@ export default {
       if (index === 0) {
         this.curItemArr = [item]
       } else {
-         this.$set(this.curItemArr, index, item);
+        this.$set(this.curItemArr, index, item);
       }
       this.updateNextLists(item, index + 1);
     },
@@ -160,17 +149,21 @@ export default {
   background-color: #ffffff;
   border-radius: 2px;
   border: 1px solid #d9d9d9;
+
   &__head {
     height: 32px;
     background-color: #f6f7fa;
     padding-left: 14px;
   }
+
   &__body {
     height: calc(100% - 32px);
   }
+
   &__search {
     height: 32px;
     padding: 8px 8px 0;
+
     .el-select {
       width: 100px;
     }
@@ -179,10 +172,12 @@ export default {
       background-color: #fff;
     }
   }
+
   &__list {
     display: flex;
     height: calc(100% - 48px);
     padding: 8px 4px 0 4px;
+
     .list {
       margin: 0;
       padding-left: 0;
@@ -194,22 +189,27 @@ export default {
 
       &:last-of-type {
         border-right: none;
-        & > li {
+
+        &>li {
           justify-content: start;
         }
       }
-      & > li {
+
+      &>li {
         margin: 0 4px;
         display: flex;
         justify-content: space-around;
+
         &:hover {
           cursor: pointer;
           background-color: #f5f9ff;
         }
+
         &.isActive {
           background-color: #edf3ff;
         }
       }
+
       &::-webkit-scrollbar {
         width: 10px;
         height: 1px;
