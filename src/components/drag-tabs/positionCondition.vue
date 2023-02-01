@@ -16,18 +16,17 @@
         <template v-if="form.areaType !== '区域绘制'">
           <el-form-item label="区域设置:">
             <el-radio-group v-model="form.areaSetting">
-              <el-radio label="省份">省份</el-radio>
-              <el-radio label="城市">城市</el-radio>
-              <el-radio label="区县">区县</el-radio>
-              <el-radio label="多边形区域">多边形区域</el-radio>
-              <el-radio label="位置点">位置点</el-radio>
-              <el-radio label="无范围">无范围</el-radio>
+              <el-radio
+                v-for="(label, inx) in areaSettingOps[form.areaType]"
+                :key="inx"
+                :label="label"
+                >{{ label }}</el-radio
+              >
             </el-radio-group>
           </el-form-item>
           <!-- 动态 -->
-          <el-form-item v-if="form.areaSetting !== '无范围'" label="选择区域">
-            <selectArea />
-            <selectedLabels />
+          <el-form-item v-if="form.areaSetting !== '无范围'" label="选择区域:">
+            <areaCompose />
           </el-form-item>
           <el-form-item v-else label="">
             <div class="noTime">
@@ -37,9 +36,7 @@
           </el-form-item>
         </template>
         <!-- 区域绘制 -->
-        <div v-else>
-          地图绘制
-        </div>
+        <div v-else>地图绘制</div>
         <!-- 结果 -->
         <el-form-item label="">
           <div class="result">已输入地理条件：{{ result }}</div>
@@ -53,13 +50,12 @@
   </div>
 </template>
 <script>
-import selectArea from './selectArea.vue';
-import selectedLabels from './selectedLabels.vue';
+import areaCompose from './areaCompose.vue';
+
 export default {
   name: 'position-condition',
   components: {
-    selectArea,
-    selectedLabels,
+    areaCompose
   },
   data() {
     return {
@@ -67,17 +63,20 @@ export default {
         areaType: '区域',
         areaSetting: '省份',
       },
+      areaSettingOps: {
+        区域对: ['省份', '城市', '区县'],
+        区域: ['省份', '城市', '区县', '多边形区域', '位置点', '无范围'],
+      },
+      areaList: [],
     };
   },
   computed: {
     result() {
       const { areaType, areaSetting } = this.form;
-      return `${areaType}、${areaSetting}`;
+      return `${areaType}、${areaSetting}、${this.areaList.join('，').replace(/\//g, '')}`;
     },
   },
-  watch: {
-   
-  },
+  watch: {},
 };
 </script>
 

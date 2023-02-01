@@ -4,7 +4,7 @@
     <div class="select-area__body">
       <div class="select-area__search">
         <el-input v-model="searchVal" :placeholder="`搜索${selectVal}`">
-          <el-select v-model="selectVal" slot="prepend" placeholder="请选择">
+          <el-select v-if="selectOps.length" v-model="selectVal" slot="prepend" placeholder="请选择">
             <el-option v-for="opt in selectOps" :key="opt" :value="opt" />
           </el-select>
         </el-input>
@@ -19,10 +19,11 @@
           >
             <div>
               <el-checkbox
+                v-if="'checked' in item"
                 v-model="item.checked"
                 :indeterminate="item.indeterminate"
                 @change="() => handleFirstChange(item)"
-              ></el-checkbox>
+              />
               {{ item.label }}
             </div>
             <span>{{ '>' }}</span>
@@ -37,7 +38,11 @@
             @change="() => handleSecondChange(item)"
           >
             <span>
-              <el-checkbox v-model="item.checked" :indeterminate="item.indeterminate"></el-checkbox>
+              <el-checkbox
+                v-if="'checked' in item"
+                v-model="item.checked"
+                :indeterminate="item.indeterminate"
+              />
               {{ item.label }}
             </span>
             <span>{{ '>' }}</span>
@@ -45,14 +50,14 @@
         </ul>
         <ul class="list" v-if="thirdLevelOps.length">
           <li
-            v-for="item in thirdLevelOps"
+            v-for="item in showThirdLevelOps"
             :class="{ isActive: curThirdLevelItem.label === item.label }"
             :key="`${item.label}3`"
             @click="handleThirdLevel(item)"
             @change="() => handleThirdChange(item)"
           >
             <div style="padding-left: 12px">
-              <el-checkbox v-model="item.checked"></el-checkbox>
+              <el-checkbox v-if="'checked' in item" v-model="item.checked" />
               {{ item.label }}
             </div>
           </li>
@@ -67,9 +72,13 @@ import { tree } from './static';
 export default {
   name: 'select-area',
   props: {
+    data: {
+      type: Array,
+      default: () => [],
+    },
     selectOps: {
       type: Array,
-      default: () => ['省份', '城市', '区县'],
+      default: () => [],
     },
     treeData: {
       type: Array,
@@ -81,16 +90,27 @@ export default {
     return {
       searchVal: '',
       selectVal: '',
-      // treeOps: [],
+      curCheckedItem: [],
       firstLevelOps: [],
       curFirstLevelItem: '',
       secondLevelOps: [],
       curSecondLevelItem: '',
       thirdLevelOps: [],
+      oldThirdLevelOps: null,
       curThirdLevelItem: '',
     };
   },
-  computed: {},
+  computed: {
+    curCheckedItems() {
+      if (this.thirdLevelOps.some((item) => item.checked)) {
+        return this.thirdLevelOps.filter((item) => item.checked);
+      }
+      return (this.oldThirdLevelOps || []).filter((item) => item.checked);
+    },
+    showThirdLevelOps() {
+      return this.thirdLevelOps.filter(item => item.label.includes(this.searchVal))
+    }
+  },
   watch: {
     treeData: {
       handler(newTree) {
@@ -104,83 +124,59 @@ export default {
       },
       immediate: true,
     },
+    data: {
+      handler(newVal) {
+        if (Array.isArray(newVal) && newVal.length) {
+          const [first, second] = newVal[0].split('/');
+          const preAddr = `${first}/${second}/`;
+          this.curCheckedItems.forEach((item) => {
+            if (!newVal.includes(`${preAddr}${item.label}`)) {
+              item.checked = false;
+            }
+          });
+        } else if (!newVal.length) {
+          this.curCheckedItems.forEach((item) => {
+            item.checked = false;
+          });
+        }
+      },
+      immediate: true,
+    },
   },
   methods: {
-    formatTreeData(treeData) {
-      const firstLevel = [];
-      const secondLevel = [];
-      const thirdLevel = [];
-      for (const item of treeData) {
-        firstLevel.push({
-          label: item.label,
-        });
-        for (const subItem of item.children || []) {
-          secondLevel.push({
-            label: subItem.label,
-          });
-          for (const childItem of subItem.children || []) {
-            thirdLevel.push({
-              label: childItem.label,
-            });
-          }
-        }
-      }
-      return [firstLevel, secondLevel, thirdLevel];
-    },
     handleFirstLevel(item) {
       this.curFirstLevelItem = item;
       this.secondLevelOps = item.children;
       this.curSecondLevelItem = this.secondLevelOps[0];
+
+      if (this.thirdLevelOps.some((item) => item.checked)) {
+        this.oldThirdLevelOps = this.thirdLevelOps;
+      }
       this.thirdLevelOps = this.curSecondLevelItem.children;
     },
     handleSecondLevel(item) {
       this.curSecondLevelItem = item;
+      if (this.thirdLevelOps.some((item) => item.checked)) {
+        this.oldThirdLevelOps = this.thirdLevelOps;
+      }
       this.thirdLevelOps = item.children;
     },
     handleThirdLevel(item) {
       this.curThirdLevelItem = item;
     },
-    handleFirstChange(curItem) {
-      this.setNextLevel(curItem.checked, this.secondLevelOps);
-    },
-    handleSecondChange(curItem) {
-      // 控制下一层级
-      const curCheckedOps = this.secondLevelOps.filter((item) => item.checked);
-      this.setPreLevel(curCheckedOps, this.curFirstLevelItem);
-      this.setNextLevel(curItem.checked, this.thirdLevelOps);
-    },
-    handleThirdChange() {
-      /*  console.log(status);
-      console.log(item); */
-      const curCheckedOps = this.thirdLevelOps.filter((item) => item.checked);
-      //控制上一层级
-      if (!curCheckedOps.length) {
-        this.curSecondLevelItem.checked = false;
-        this.curSecondLevelItem.indeterminate = false;
-      } else if (curCheckedOps.length < this.thirdLevelOps.length) {
-        this.curSecondLevelItem.checked = false;
-        this.curSecondLevelItem.indeterminate = true;
-      } else {
-        this.curSecondLevelItem.checked = true;
-        this.curSecondLevelItem.indeterminate = false;
+    handleThirdChange(item) {
+      if (this.oldThirdLevelOps && !this.oldThirdLevelOps.includes(item)) {
+        this.oldThirdLevelOps.forEach((item) => {
+          item.checked = false;
+        });
+        this.oldThirdLevelOps = null;
       }
-    },
-    setPreLevel(curCheckedOps, curLevelItem) {
-      if (!curCheckedOps.length) {
-        curLevelItem.checked = false;
-        curLevelItem.indeterminate = false;
-      } else if (curCheckedOps.length < this.thirdLevelOps.length) {
-        curLevelItem.checked = false;
-        curLevelItem.indeterminate = true;
-      } else {
-        curLevelItem.checked = true;
-        curLevelItem.indeterminate = false;
-      }
-    },
-    setNextLevel(status, checkedItem) {
-      for (const item of checkedItem.children) {
-        item.checked = checkedItem.checked;
-      }
+      const curCheckedOps = this.thirdLevelOps
+        .filter((item) => item.checked)
+        .map(
+          (item) => `${this.curFirstLevelItem.label}/${this.curSecondLevelItem.label}/${item.label}`
+        );
+      this.$emit('update:data', curCheckedOps);
     },
   },
 };
@@ -215,7 +211,7 @@ export default {
   &__list {
     display: flex;
     height: calc(100% - 48px);
-    padding: 8px 0 0 0;
+    padding: 8px 4px 0 4px;
     .list {
       margin: 0;
       padding-left: 0;

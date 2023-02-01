@@ -65,14 +65,18 @@
         <el-button size="mini" type="primary" @click="copyTask">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- test component -->
+    <testCheckedBox />
   </div>
 </template>
 <script>
 import conditionSetting from './conditionSetting.vue';
+import testCheckedBox from './testCheckedBox.vue';
 export default {
   name: 'write-task',
   components: {
     conditionSetting,
+    testCheckedBox
   },
   data() {
     return {

@@ -1,9 +1,8 @@
 <template>
-  <div class="selected-labels">
-    <div class="selected-labels__head">已选区县</div>
-    <div class="selected-labels__body">
+  <div class="area-select">
+    <div class="area-select__body">
       <el-tag
-        v-for="tag in selectTags"
+        v-for="tag in dynamicTags"
         :key="tag"
         type="info"
         size="small"
@@ -17,46 +16,31 @@
 
 <script>
 export default {
-  name: 'selected-labels',
+  name: 'area-select',
   props: {
-    tagData: {
-      type: Object,
-      default: () => ({
-        prefix: '',
-        list: [],
-      }),
+    selectTags: {
+      type: Array,
+      default: () => ['省份', '城市', '区县'],
     },
   },
   components: {},
   data() {
     return {
-      selectTags: [],
     };
   },
-  computed: {},
-  watch: {
-    tagData: {
-      handler(newTagData) {
-        if (!newTagData.list.length) return;
-        let { prefix, list } = newTagData;
-        prefix = prefix.replace(/\//g, '');
-        this.selectTags = list.filter(item => item.checked).map((item) => `${prefix}${item.label}`);
-      },
-      deep: true,
-      immediate: true,
-    },
-  },
+  watch: {},
   methods: {
     handleClose(tag) {
-      this.$emit('deleteTag', tag);
+      const otherTags = this.selectTags.filter(label => label !== tag);
+      this.$emit('update:tags', otherTags);
     },
   },
 };
 </script>
 <style lang="less" scoped>
-.selected-labels {
+.area-select {
   display: inline-block;
-  width: 420px;
+  width: 520px;
   height: 280px;
   background-color: #ffffff;
   border-radius: 2px;
@@ -67,6 +51,7 @@ export default {
     padding-left: 14px;
   }
   &__body {
+    // padding: 4px;
     height: calc(100% - 32px);
     overflow: auto;
     .el-tag {

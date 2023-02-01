@@ -52,15 +52,16 @@ const options = {
     valueFormat: 'yyyy-MM-dd HH:mm:ss',
   },
 };
-
 const tree = [
   {
     label: '广东省',
-    checked: false,
+    /*  checked: false,
+    indeterminate: false,  */
     children: [
       {
         label: '广州市',
-        checked: false,
+        /*  checked: false,
+        indeterminate: false,  */
         children: [
           {
             label: '天河区',
@@ -70,7 +71,8 @@ const tree = [
       },
       {
         label: '深圳市',
-        checked: false,
+        /* checked: false,
+        indeterminate: false,  */
         children: [
           { label: '宝安区', checked: false },
           { label: '南山区', checked: false },
@@ -82,11 +84,13 @@ const tree = [
   },
   {
     label: '浙江省',
-    checked: false,
+    /* checked: false,
+    indeterminate: false,  */
     children: [
       {
         label: '杭州市',
-        checked: false,
+        /*  checked: false,
+        indeterminate: false, */
         children: [
           {
             label: '五菱区',
@@ -97,15 +101,59 @@ const tree = [
     ],
   },
   {
-    label: '浙江省',
-    checked: false,
+    label: '江西省',
+    /* checked: false,
+    indeterminate: false, */
     children: [
       {
-        label: '杭州市',
-        checked: false,
+        label: '九江市',
+        /*  checked: false,
+        indeterminate: false, */
         children: [
           {
-            label: '五菱区',
+            label: '濂溪区',
+            checked: false,
+          },
+          {
+            label: '柴桑区',
+            checked: false,
+          },
+          {
+            label: '八里湖区',
+            checked: false,
+          },
+        ],
+      },
+      {
+        label: '南昌市',
+        /* checked: false,
+        indeterminate: false, */
+        children: [
+          {
+            label: '新建区',
+            checked: false,
+          },
+          {
+            label: '高健区',
+            checked: false,
+          },
+          {
+            label: '红谷区',
+            checked: false,
+          },
+        ],
+      },
+      {
+        label: '吉安市',
+        /* checked: false,
+        indeterminate: false, */
+        children: [
+          {
+            label: '吉州区',
+            checked: false,
+          },
+          {
+            label: '清远区',
             checked: false,
           },
         ],
@@ -113,63 +161,25 @@ const tree = [
     ],
   },
   {
-    label: '浙江省',
-    checked: false,
+    label: '湖北省',
+    /* checked: false,
+    indeterminate: false, */
     children: [
       {
-        label: '杭州市',
-        checked: false,
+        label: '武汉市',
+        /*    checked: false,
+        indeterminate: false, */
         children: [
           {
-            label: '五菱区',
+            label: '江岸区',
             checked: false,
           },
-        ],
-      },
-    ],
-  },
-  {
-    label: '浙江省',
-    checked: false,
-    children: [
-      {
-        label: '杭州市',
-        checked: false,
-        children: [
           {
-            label: '五菱区',
+            label: '江汉区',
             checked: false,
           },
-        ],
-      },
-    ],
-  },
-  {
-    label: '浙江省',
-    checked: false,
-    children: [
-      {
-        label: '杭州市',
-        checked: false,
-        children: [
           {
-            label: '五菱区',
-            checked: false,
-          },
-        ],
-      },
-    ],
-  },
-  {
-    label: '浙江省',
-    checked: false,
-    children: [
-      {
-        label: '杭州市',
-        checked: false,
-        children: [
-          {
-            label: '五菱区',
+            label: '汉阳区',
             checked: false,
           },
         ],
@@ -177,5 +187,63 @@ const tree = [
     ],
   },
 ];
+const twoTree = [
+  {
+    label: '广东省',
+    children: [
+      {
+        label: '广州市',
+      },
+      {
+        label: '深圳市',
+      },
+    ],
+  },
+  {
+    label: '浙江省',
 
-export { options, tree };
+    children: [
+      {
+        label: '杭州市',
+      },
+    ],
+  },
+  {
+    label: '江西省',
+
+    children: [
+      {
+        label: '九江市',
+      },
+      {
+        label: '南昌市',
+      },
+      {
+        label: '吉安市',
+      },
+    ],
+  },
+  {
+    label: '湖北省',
+    children: [
+      {
+        label: '武汉市',
+      },
+    ],
+  },
+];
+const oneTree = [
+  {
+    label: '广东省',
+  },
+  {
+    label: '浙江省',
+  },
+  {
+    label: '江西省',
+  },
+  {
+    label: '湖北省',
+  },
+];
+export { options, tree, twoTree, oneTree };
