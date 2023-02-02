@@ -26,7 +26,15 @@
           </el-form-item>
           <!-- 动态 -->
           <el-form-item v-if="form.areaSetting !== '无范围'" label="选择区域:">
-            <areaCompose />
+            <Keep-alive>
+              <component
+                :key="compData[selectLabel].name + compData[selectLabel].type"
+                :is="compData[selectLabel].name"
+                :areaType="compData[selectLabel].type"
+                :panelLevels="compData[selectLabel].panelLevels"
+                :selectTags="compData[selectLabel].tags"
+              />
+            </Keep-alive>
           </el-form-item>
           <el-form-item v-else label="">
             <div class="noTime">
@@ -51,11 +59,25 @@
 </template>
 <script>
 import areaCompose from './areaCompose.vue';
+import subAreaSelect from './posComps/subAreaSelect.vue';
+import areaPairSelect from './posComps/areaPairSelect.vue';
+import multiAreaSelect from './posComps/multiAreaSelect.vue';
+
+import { tree, mallTree } from './static';
 
 export default {
   name: 'position-condition',
   components: {
-    areaCompose
+    areaCompose,
+    subAreaSelect,
+    areaPairSelect,
+    multiAreaSelect
+  },
+  provide() {
+    return {
+      tree,
+      mallTree
+    }
   },
   data() {
     return {
@@ -68,9 +90,58 @@ export default {
         区域: ['省份', '城市', '区县', '多边形区域', '位置点', '无范围'],
       },
       areaList: [],
+      compData: {
+        '区域-省份': {
+          name: 'subAreaSelect',
+          type: '省份',
+          panelLevels: 1,
+          tags: [],
+        },
+        '区域-城市': {
+          name: 'subAreaSelect',
+          type: '城市',
+          panelLevels: 2,
+          tags: [],
+        },
+        '区域-区县': {
+          name: 'subAreaSelect',
+          type: '区县',
+          panelLevels: 3,
+          tags: [],
+        },
+        '区域-多边形区域': {
+          name: 'multiAreaSelect',
+          type: '多边形区域',
+          tags: [],
+        },
+        '区域-位置点': '',
+        '区域-无范围': '',
+        '区域对-省份': {
+          name: 'areaPairSelect',
+          type: '省份',
+          panelLevels: 1,
+          tags: [],
+        },
+        '区域对-城市': {
+          name: 'areaPairSelect',
+          type: '城市',
+          panelLevels: 2,
+          tags: [],
+        },
+        '区域对-区县': {
+          name: 'areaPairSelect',
+          type: '区县',
+          panelLevels: 3,
+          tags: [],
+        },
+      },
     };
   },
   computed: {
+    selectLabel() {
+      const { areaType, areaSetting } = this.form;
+      return `${areaType}-${areaSetting}`;
+    },
     result() {
       const { areaType, areaSetting } = this.form;
       return `${areaType}、${areaSetting}、${this.areaList.join('，').replace(/\//g, '')}`;

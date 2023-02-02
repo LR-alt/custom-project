@@ -246,4 +246,93 @@ const oneTree = [
     label: '湖北省',
   },
 ];
-export { options, tree, twoTree, oneTree };
+const mallTree = [
+  {
+    label: '商场',
+    children: [
+      {
+        label: '全部',
+      },
+      {
+        label: '南方基地',
+      },
+      {
+        label: '天汇创意园',
+      },
+      {
+        label: '天河智慧城',
+      },
+      {
+        label: '智慧中心',
+      },
+    ],
+  },
+  {
+    label: '园区',
+    children: [
+      {
+        label: '南山科技园',
+      },
+      {
+        label: '天安云谷',
+      },
+      {
+        label: '金荣达工业园',
+      },
+      {
+        label: '科兴科学园',
+      },
+    ],
+  },
+  {
+    label: '学校',
+    children: [
+      {
+        label: '宝安中学',
+      },
+      {
+        label: '育才学校',
+      },
+      {
+        label: '博文学校',
+      },
+    ],
+  },
+  {
+    label: '景区',
+    children: [
+      {
+        label: '世界之窗',
+      },
+      {
+        label: '仙湖植物园',
+      },
+      {
+        label: '大千世界',
+      },
+    ],
+  },
+  {
+    label: '机场',
+    children: [
+      {
+        label: '宝安国际机场',
+      },
+      {
+        label: '虹桥国际机场',
+      },
+    ],
+  },
+  {
+    label: '高铁站',
+    children: [
+      {
+        label: '深圳北站',
+      },
+      {
+        label: '光明城站',
+      },
+    ],
+  },
+]
+export { options, tree, twoTree, oneTree, mallTree };

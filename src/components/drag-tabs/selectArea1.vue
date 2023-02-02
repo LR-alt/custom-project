@@ -1,11 +1,26 @@
 <template>
   <div class="select-area">
-    <div class="select-area__head">请选择</div>
+    <div class="select-area__head">请选择{{ title || selectAreaType }}</div>
     <div class="select-area__body">
       <div class="select-area__search">
-        <el-input v-model="searchVal" :placeholder="`搜索${selectVal}`">
-          <el-select v-if="selectOps.length" v-model="selectVal" slot="prepend" placeholder="请选择">
-            <el-option v-for="opt in selectOps" :key="opt.label" :value="opt.value" :label="opt.label" />
+        <el-input
+          v-model="searchVal"
+          class="input-with-select"
+          :placeholder="`搜索${selectLabel || selectAreaType}`"
+        >
+          <el-select
+            v-if="selectOps.length"
+            v-model="selectVal"
+            @change="handleSelect"
+            slot="prepend"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="opt in selectOps"
+              :key="opt.label"
+              :value="opt.value"
+              :label="opt.label"
+            />
           </el-select>
         </el-input>
       </div>
@@ -13,15 +28,21 @@
         <template v-for="(list, index) in listData">
           <ul v-if="list.length" class="list" :key="index">
             <template v-if="index === 0 || curItemArr[index - 1]">
-              <li v-for="(item, inx) in filterList(list, index)"
+              <li
+                v-for="(item, inx) in filterList(list, index)"
                 :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }"
-                :key="`${item.label}${inx}`" @click="handleClkItem(item, index)">
+                :key="`${item.label}${inx}`"
+                @click="handleClkItem(item, index)"
+              >
                 <template v-if="index < listData.length - 1">
                   <span>{{ item.label }}</span>
                   <span>{{ '>' }}</span>
                 </template>
                 <div v-else style="padding-left: 12px">
-                  <el-checkbox v-model="item.checked" @change="() => handleItemChange(item, index)" />
+                  <el-checkbox
+                    v-model="item.checked"
+                    @change="() => handleItemChange(item, index)"
+                  />
                   {{ item.label }}
                 </div>
               </li>
@@ -34,11 +55,13 @@
 </template>
 
 <script>
-import { tree } from './static';
-
 export default {
   name: 'select-area',
   props: {
+    title: {
+      type: String,
+      default: '',
+    },
     checkedData: {
       type: Object,
       default: () => ({
@@ -55,29 +78,59 @@ export default {
     },
     treeData: {
       type: Array,
-      default: () => tree,
+      default: () => [],
+    },
+    panelLevels: {
+      type: Number,
+      default: 3,
     },
   },
   components: {},
   data() {
     return {
       searchVal: '',
-      selectVal: '',
+      selectVal: 1,
       listData: [],
       curItemArr: [],
+      mapAreaNames: ['省份', '地市', '区县'],
     };
   },
-
+  computed: {
+    selectAreaType() {
+      return this.mapAreaNames[this.panelLevels - 1];
+    },
+    selectLabel() {
+      const curSelectItem =
+        this.selectOps.length && this.selectOps.find((item) => item.value === this.selectVal);
+      if (!curSelectItem) {
+        return '';
+      }
+      return curSelectItem.label;
+    },
+    isAllowSelect() {
+      return Boolean(this.selectOps.length);
+    },
+  },
   mounted() {
     this.initCheckData();
   },
-  watch: {},
+  watch: {
+    selectVal: {
+      handler(value) {
+        this.flatTree(this.treeData, [], Number(value));
+      },
+    },
+  },
   methods: {
     initCheckData() {
       let { prefix, list } = this.checkedData;
       const tagArr = prefix.split('/');
 
-      this.flatTree(this.treeData, tagArr);
+      this.flatTree(
+        this.treeData,
+        tagArr,
+        this.isAllowSelect ? this.selectVal : this.panelLevels - 1
+      );
 
       const checkedList = list.map((item) => item.label).filter(Boolean);
       const lastList = this.listData[this.listData.length - 1];
@@ -87,12 +140,14 @@ export default {
         }
       });
     },
-    flatTree(newTree, tagArr) {
+    flatTree(newTree, tagArr, len) {
       let curData = newTree;
       let i = 0;
-      while (curData.length) {
+      this.listData = [];
+      this.curItemArr = [];
+      while (curData.length && i <= len) {
         this.listData.push(curData);
-        const curItem = curData.find((item) => item.label === tagArr[i])
+        const curItem = curData.find((item) => item.label === tagArr[i]);
         const nextData = curItem || curData[0];
         if (curItem && curItem.children && curItem.children.length) {
           this.curItemArr.push(nextData);
@@ -113,7 +168,7 @@ export default {
     },
     handleClkItem(item, index) {
       if (index === 0) {
-        this.curItemArr = [item]
+        this.curItemArr = [item];
       } else {
         this.$set(this.curItemArr, index, item);
       }
@@ -138,13 +193,17 @@ export default {
       }
       return list;
     },
+    handleSelect(value) {
+      this.$emit('selectOption', value, this.selectLabel);
+    },
   },
 };
 </script>
 <style lang="less" scoped>
 .select-area {
+  margin-right: 8px;
   display: inline-block;
-  width: 420px;
+  // width: 100%;
   height: 280px;
   background-color: #ffffff;
   border-radius: 2px;
@@ -165,9 +224,11 @@ export default {
     padding: 8px 8px 0;
 
     .el-select {
-      width: 100px;
+      width: 80px;
     }
-
+    /deep/ .el-input__inner {
+      // width: 100%;
+    }
     /deep/ .el-input-group__prepend {
       background-color: #fff;
     }
@@ -183,6 +244,7 @@ export default {
       padding-left: 0;
       height: 192px;
       flex: 1;
+      min-width: 120px;
       list-style: none;
       overflow: auto;
       border-right: 1px solid #ccc;
@@ -190,12 +252,12 @@ export default {
       &:last-of-type {
         border-right: none;
 
-        &>li {
+        & > li {
           justify-content: start;
         }
       }
 
-      &>li {
+      & > li {
         margin: 0 4px;
         display: flex;
         justify-content: space-around;

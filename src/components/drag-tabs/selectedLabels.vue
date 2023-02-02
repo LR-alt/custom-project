@@ -1,6 +1,6 @@
 <template>
   <div class="selected-labels">
-    <div class="selected-labels__head">已选区县</div>
+    <div class="selected-labels__head">已选{{ title || mapAreaNames[panelLevels - 1] }}</div>
     <div class="selected-labels__body">
       <el-tag
         v-for="tag in selectTags"
@@ -26,11 +26,20 @@ export default {
         list: [],
       }),
     },
+    title: {
+      type: String,
+      default: '',
+    },
+    panelLevels: {
+      type: Number,
+      default: 3,
+    },
   },
   components: {},
   data() {
     return {
       selectTags: [],
+      mapAreaNames: ['省份', '地市', '区县'],
     };
   },
   computed: {},
@@ -40,7 +49,9 @@ export default {
         if (!newTagData.list.length) return;
         let { prefix, list } = newTagData;
         prefix = prefix.replace(/\//g, '');
-        this.selectTags = list.filter(item => item.checked).map((item) => `${prefix}${item.label}`);
+        this.selectTags = list
+          .filter((item) => item.checked)
+          .map((item) => `${prefix}${item.label}`);
       },
       deep: true,
       immediate: true,
@@ -56,7 +67,7 @@ export default {
 <style lang="less" scoped>
 .selected-labels {
   display: inline-block;
-  width: 420px;
+  width: 100%;
   height: 280px;
   background-color: #ffffff;
   border-radius: 2px;
