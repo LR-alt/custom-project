@@ -2,10 +2,22 @@
 <template>
   <div class="areaPair-select">
     <div class="areaPair-select__source">
-      <subAreaSelect :areaType="areaType" :panelLevels="mapPanelLevels[areaType]" :title="`源${areaType}`" isVertical />
+      <subAreaSelect
+        :areaType="areaType"
+        :panelLevels="mapPanelLevels[areaType]"
+        :title="`源${areaType}`"
+        @collectTags="collectTags"
+        isVertical
+      />
     </div>
     <div class="areaPair-select__target">
-      <subAreaSelect :areaType="areaType" :panelLevels="mapPanelLevels[areaType]" :title="`目的${areaType}`" isVertical />
+      <subAreaSelect
+        :areaType="areaType"
+        :panelLevels="mapPanelLevels[areaType]"
+        :title="`目的${areaType}`"
+        @collectTags="collectTargetTags"
+        isVertical
+      />
     </div>
   </div>
 </template>
@@ -14,6 +26,7 @@
 import subAreaSelect from './subAreaSelect.vue';
 export default {
   name: 'areaPair-select',
+  inject: ['getTags'],
   props: {
     areaType: {
       type: String,
@@ -26,16 +39,25 @@ export default {
   data() {
     return {
       mapPanelLevels: {
-        '省份': 1,
-        '城市': 2,
-        '区县': 3,
-      }
+        省份: 1,
+        城市: 2,
+        区县: 3,
+      },
+      srcTags: [],
+      tarTags: [],
     };
   },
   mounted() {},
   watch: {},
   methods: {
-   
+    collectTags (tags) {
+      this.srcTags = tags;
+      this.getTags([this.srcTags, this.tarTags]);
+    },
+    collectTargetTags (tags) {
+      this.tarTags = tags;
+      this.getTags([this.srcTags, this.tarTags]);
+    }
   },
 };
 </script>

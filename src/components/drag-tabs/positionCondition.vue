@@ -47,7 +47,7 @@
         <div v-else>地图绘制</div>
         <!-- 结果 -->
         <el-form-item label="">
-          <div class="result">已输入地理条件：{{ result }}</div>
+          <div class="result" :title="result">已输入地理条件：{{ result }}</div>
         </el-form-item>
         <!-- 下一步 -->
         <el-form-item label="">
@@ -71,13 +71,14 @@ export default {
     areaCompose,
     subAreaSelect,
     areaPairSelect,
-    multiAreaSelect
+    multiAreaSelect,
   },
   provide() {
     return {
       tree,
-      mallTree
-    }
+      mallTree,
+      getTags: (tags, type) => this.getTags(tags, type),
+    };
   },
   data() {
     return {
@@ -135,6 +136,7 @@ export default {
           tags: [],
         },
       },
+      conclusion: '',
     };
   },
   computed: {
@@ -144,10 +146,22 @@ export default {
     },
     result() {
       const { areaType, areaSetting } = this.form;
-      return `${areaType}、${areaSetting}、${this.areaList.join('，').replace(/\//g, '')}`;
+      return `${areaType}、${areaSetting}、${this.conclusion}`;
     },
   },
   watch: {},
+  methods: {
+    getTags(tags) {
+      if (this.form.areaType !== '区域对') {
+        this.conclusion = tags.join('、');
+      } else {
+        const [srcTags, tarTags] = tags;
+        this.conclusion = `源${this.form.areaSetting}：${srcTags.join('、')}；目的${
+          this.form.areaSetting
+        }：${tarTags.join('、')}`;
+      }
+    },
+  },
 };
 </script>
 
@@ -185,10 +199,23 @@ export default {
       .result {
         display: inline-block;
         padding: 0 12px;
+        max-width: 97%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
         border: 1px solid #8db2fe;
         background-color: #edf3ff;
+        &:hover {
+          cursor: pointer;
+        }
       }
     }
   }
+}
+.text-ellipsis {
+  width: 96%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

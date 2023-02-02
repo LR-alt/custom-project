@@ -13,6 +13,7 @@
       :class="isVertical ? mapWidths[areaType] : ''"
       v-bind="$attrs"
       :tagData="checkedData"
+      @updateTags="updateTags"
       @deleteTag="deleteTag"
     />
   </div>
@@ -23,7 +24,7 @@ import selectArea from '../selectArea1.vue';
 import selectedLabels from '../selectedLabels.vue';
 export default {
   name: 'sub-area-select',
-  inject: ['tree'],
+  inject: ['tree', 'getTags'],
   props: {
     isVertical: {
       type: Boolean,
@@ -46,10 +47,10 @@ export default {
         list: [{ label: '' }, { label: '' }],
       },
       mapWidths: {
-        '省份': 'w-210',
-        '城市': 'w-250',
-        '区县': 'w-370',
-      }
+        省份: 'w-210',
+        城市: 'w-250',
+        区县: 'w-370',
+      },
     };
   },
   mounted() {},
@@ -68,6 +69,13 @@ export default {
       const prefix = this.checkedData.prefix.replace(/\//g, '');
       const curItem = this.checkedData.list.find((item) => tag === `${prefix}${item.label}`);
       curItem.checked = false;
+    },
+    updateTags(tags) {
+      if (this.isVertical) {
+        this.$emit('collectTags', tags);
+      } else {
+        this.getTags(tags);
+      }
     },
   },
 };

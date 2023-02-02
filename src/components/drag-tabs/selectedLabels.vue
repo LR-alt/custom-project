@@ -46,12 +46,13 @@ export default {
   watch: {
     tagData: {
       handler(newTagData) {
-        if (!newTagData.list.length) return;
         let { prefix, list } = newTagData;
         prefix = prefix.replace(/\//g, '');
         this.selectTags = list
           .filter((item) => item.checked)
           .map((item) => `${prefix}${item.label}`);
+        // 更新tags到上层组件
+        this.$emit('updateTags', this.selectTags);
       },
       deep: true,
       immediate: true,
