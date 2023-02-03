@@ -1,24 +1,13 @@
 <template>
   <div class="write-task">
-    <el-tabs
-      class="write-task__tabs"
-      v-model="curTabValue"
-      type="border-card"
-      @keydown.native.capture.stop
-    >
+    <el-tabs v-if="true" class="write-task__tabs" v-model="curTabValue" type="border-card" @keydown.native.capture.stop>
       <el-tab-pane v-for="item in editTabs" :name="item.name" :key="item.name">
         <!-- 动态tab页签 -->
         <span slot="label">
           <!-- 文本 -->
           <div class="wrap">
-            <el-input
-              v-if="item.isEdit"
-              v-focus
-              class="edit-label"
-              v-model="item.title"
-              size="mini"
-              @blur="handleBlur(item)"
-            />
+            <el-input v-if="item.isEdit" v-focus class="edit-label" v-model="item.title" size="mini"
+              @blur="handleBlur(item)" />
             <span class="text" :style="{ visibility: !item.isEdit ? 'visible' : 'hidden' }">
               {{ item.title }}
             </span>
@@ -46,13 +35,7 @@
       </el-tab-pane>
     </el-tabs>
     <!-- 复制子任务弹窗 -->
-    <el-dialog
-      class="write-task__copyTask"
-      title="复制子任务"
-      :visible.sync="dialogVisible"
-      width="30%"
-      destroy-on-close
-    >
+    <el-dialog class="write-task__copyTask" title="复制子任务" :visible.sync="dialogVisible" width="30%" destroy-on-close>
       <el-form :model="subTaskForm" size="small" inline>
         <el-form-item label="可选择复制子任务：">
           <el-select v-model="subTaskForm.taskName">
@@ -163,7 +146,7 @@ export default {
         this.removeTab(item.name);
       }
     },
-    copyTask() {},
+    copyTask() { },
   },
 };
 </script>
@@ -172,75 +155,94 @@ export default {
 .write-task {
   height: 100%;
   padding: 12px;
+
   &__tabs {
     height: 100%;
     border: 1px solid #ccc;
+
     .el-tab-pane {
       height: 100%;
     }
-    /deep/ & > .el-tabs__header {
+
+    /deep/ &>.el-tabs__header {
       margin-bottom: 0;
+
       .el-tabs__item {
         height: 40px;
         line-height: 40px;
+
         &:last-of-type {
           padding: 0 10px;
           color: #909399;
           font-size: 16px;
           border-left-color: #dcdfe6;
           border-right-color: transparent;
+
           &:hover {
             color: #3978fb;
             cursor: pointer;
           }
         }
+
         &.is-active {
           border-bottom: 2px solid #3978fb;
         }
+
         .wrap {
           display: inline-block;
           position: relative;
+
           .edit-label {
             position: absolute;
+
             /deep/ .el-input__inner {
               padding: 0 2px 0 4px;
               min-width: 40px;
             }
           }
+
           .text {
             display: inline-block;
             min-width: 40px;
           }
         }
       }
+
       .edit-icon {
         margin-left: 6px;
       }
     }
-    /deep/ & > .el-tabs__content {
+
+    /deep/ &>.el-tabs__content {
       padding: 0px !important;
       height: calc(100% - 39px);
     }
   }
+
   &__copyTask {
     /deep/ .el-dialog__header {
       padding-top: 10px;
       border-bottom: 1px solid #ccc;
+
       .el-dialog__title {
         font-size: 16px;
         font-weight: bold;
       }
+
       .el-dialog__headerbtn {
         top: 14px;
       }
     }
+
     /deep/ .el-dialog__body {
       .el-form {
         .el-form-item {
           display: flex;
           margin: 0;
+
           &__content {
             flex: 1;
+
             .el-select {
               width: 100%;
             }
@@ -248,12 +250,14 @@ export default {
         }
       }
     }
+
     /deep/ .el-dialog__footer {
       padding-bottom: 10px;
       border-top: 1px solid #ccc;
     }
   }
 }
+
 .w-70 {
   width: 70%;
 }

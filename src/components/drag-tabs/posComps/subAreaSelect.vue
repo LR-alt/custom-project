@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import selectArea from '../selectArea1.vue';
+import selectArea from '../selectArea.vue';
 import selectedLabels from '../selectedLabels.vue';
 export default {
   name: 'sub-area-select',

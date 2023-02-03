@@ -1,248 +1,302 @@
 <template>
   <div class="select-area">
-    <div class="select-area__head">请选择</div>
+    <div class="select-area__head">请选择{{ title || selectAreaType }}</div>
     <div class="select-area__body">
       <div class="select-area__search">
-        <el-input v-model="searchVal" :placeholder="`搜索${selectVal}`">
-          <el-select v-model="selectVal" slot="prepend" placeholder="请选择">
-            <el-option v-for="opt in selectOps" :key="opt" :value="opt" />
+        <el-input v-model="searchVal" class="input-with-select" :placeholder="`搜索${selectLabel || selectAreaType}`">
+          <el-select v-if="selectOps.length" v-model="selectVal" @change="handleSelect" slot="prepend"
+            placeholder="请选择">
+            <el-option v-for="opt in selectOps" :key="opt.label" :value="opt.value" :label="opt.label" />
           </el-select>
         </el-input>
       </div>
       <div class="select-area__list">
-        <ul class="list" v-if="firstLevelOps.length">
-          <li
-            v-for="item in firstLevelOps"
-            :class="{ isActive: curFirstLevelItem.label === item.label }"
-            :key="`${item.label}1`"
-            @click="handleFirstLevel(item)"
-          >
-            <div>
-              <el-checkbox
-                v-model="item.checked"
-                :indeterminate="item.indeterminate"
-                @change="() => handleFirstChange(item)"
-              ></el-checkbox>
-              {{ item.label }}
-            </div>
-            <span>{{ '>' }}</span>
-          </li>
-        </ul>
-        <ul class="list" v-if="secondLevelOps.length">
-          <li
-            v-for="item in secondLevelOps"
-            :class="{ isActive: curSecondLevelItem.label === item.label }"
-            :key="`${item.label}2`"
-            @click="handleSecondLevel(item)"
-            @change="() => handleSecondChange(item)"
-          >
-            <span>
-              <el-checkbox v-model="item.checked" :indeterminate="item.indeterminate"></el-checkbox>
-              {{ item.label }}
-            </span>
-            <span>{{ '>' }}</span>
-          </li>
-        </ul>
-        <ul class="list" v-if="thirdLevelOps.length">
-          <li
-            v-for="item in thirdLevelOps"
-            :class="{ isActive: curThirdLevelItem.label === item.label }"
-            :key="`${item.label}3`"
-            @click="handleThirdLevel(item)"
-            @change="() => handleThirdChange(item)"
-          >
-            <div style="padding-left: 12px">
-              <el-checkbox v-model="item.checked"></el-checkbox>
-              {{ item.label }}
-            </div>
-          </li>
-        </ul>
+        <template v-for="(list, index) in listData">
+          <ul v-if="index !== listData.length - 1" class="list" :key="index">
+            <template v-if="index === 0 || curItemArr[index - 1]">
+              <li v-for="(item, inx) in filterList(list, index)"
+                :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }"
+                :key="`${item.label}${inx}`" @click="handleClkItem(item, index)">
+                <span>{{ item.label }}</span>
+                <span>{{ '>' }}</span>
+              </li>
+            </template>
+          </ul>
+          <el-checkbox-group v-else v-model="checkLists[index]" class="checklist" :key="`${index}-checkbox`">
+            <template v-if="index === 0 || curItemArr[index - 1]">
+              <el-checkbox v-for="(item, inx) in filterList(list, index)"
+                :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }" :label="item.label"
+                :key="`${item.label}${inx}`" @click="handleClkItem(item, index)">
+                <span>{{ item.label }}</span>
+              </el-checkbox>
+            </template>
+          </el-checkbox-group>
+        </template>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { tree } from './static';
 export default {
   name: 'select-area',
   props: {
+    title: {
+      type: String,
+      default: '',
+    },
+    checkedData: {
+      type: Object,
+      default: () => ({
+        prefix: '',
+        list: [
+          { label: '', checked: true },
+          { label: '', checked: true },
+        ],
+      }),
+    },
     selectOps: {
       type: Array,
-      default: () => ['省份', '城市', '区县'],
+      default: () => [],
     },
     treeData: {
       type: Array,
-      default: () => tree,
+      default: () => [],
+    },
+    panelLevels: {
+      type: Number,
+      default: 3,
     },
   },
   components: {},
   data() {
     return {
       searchVal: '',
-      selectVal: '',
-      // treeOps: [],
-      firstLevelOps: [],
-      curFirstLevelItem: '',
-      secondLevelOps: [],
-      curSecondLevelItem: '',
-      thirdLevelOps: [],
-      curThirdLevelItem: '',
+      selectVal: 1,
+      listData: [],
+      checkLists: [],
+      curItemArr: [],
+      mapAreaNames: ['省份', '地市', '区县'],
     };
   },
-  computed: {},
+  computed: {
+    selectAreaType() {
+      return this.mapAreaNames[this.panelLevels - 1];
+    },
+    selectLabel() {
+      const curSelectItem =
+        this.selectOps.length && this.selectOps.find((item) => item.value === this.selectVal);
+      if (!curSelectItem) {
+        return '';
+      }
+      return curSelectItem.label;
+    },
+    isAllowSelect() {
+      return Boolean(this.selectOps.length);
+    },
+  },
+  mounted() {
+    this.initCheckData();
+  },
   watch: {
-    treeData: {
-      handler(newTree) {
-        if (newTree.length) {
-          this.firstLevelOps = newTree;
-          this.curFirstLevelItem = this.firstLevelOps[0];
-          this.secondLevelOps = this.curFirstLevelItem.children;
-          this.curSecondLevelItem = this.secondLevelOps[0];
-          this.thirdLevelOps = this.curSecondLevelItem.children;
-        }
+    selectVal: {
+      handler(value) {
+        this.flatTree(this.treeData, [], Number(value));
       },
-      immediate: true,
     },
   },
   methods: {
-    formatTreeData(treeData) {
-      const firstLevel = [];
-      const secondLevel = [];
-      const thirdLevel = [];
-      for (const item of treeData) {
-        firstLevel.push({
-          label: item.label,
-        });
-        for (const subItem of item.children || []) {
-          secondLevel.push({
-            label: subItem.label,
-          });
-          for (const childItem of subItem.children || []) {
-            thirdLevel.push({
-              label: childItem.label,
-            });
-          }
+    initCheckData() {
+      let { prefix, list } = this.checkedData;
+      const tagArr = prefix.split('/');
+
+      this.flatTree(
+        this.treeData,
+        tagArr,
+        this.isAllowSelect ? this.selectVal : this.panelLevels - 1
+      );
+
+      const checkedList = list.map((item) => item.label).filter(Boolean);
+      const lastList = this.listData[this.listData.length - 1];
+      lastList.forEach((item) => {
+        if (checkedList.includes(item.label)) {
+          item.checked = true;
         }
+      });
+    },
+    flatTree(newTree, tagArr, len) {
+      let curData = newTree;
+      let i = 0;
+      this.listData = [];
+      this.curItemArr = [];
+      this.checkLists = [];
+      while (curData.length && i <= len) {
+        this.listData.push(curData);
+        this.checkLists.push([]);
+        const curItem = curData.find((item) => item.label === tagArr[i]);
+        const nextData = curItem || curData[0];
+        if (curItem && curItem.children && curItem.children.length) {
+          this.curItemArr.push(nextData);
+        }
+        curData = nextData.children || [];
+        i++;
       }
-      return [firstLevel, secondLevel, thirdLevel];
     },
-    handleFirstLevel(item) {
-      this.curFirstLevelItem = item;
-      this.secondLevelOps = item.children;
-      this.curSecondLevelItem = this.secondLevelOps[0];
-      this.thirdLevelOps = this.curSecondLevelItem.children;
+    updateNextLists(item, index) {
+      if (!item.children) return;
+      let curData = item.children;
+      const maxInx = this.listData.length - 1;
+      while (curData.length && index <= maxInx) {
+        this.listData.splice(index, 1, curData);
+        curData = curData[0].children || [];
+        index++;
+      }
     },
-    handleSecondLevel(item) {
-      this.curSecondLevelItem = item;
-      this.thirdLevelOps = item.children;
-    },
-    handleThirdLevel(item) {
-      this.curThirdLevelItem = item;
-    },
-    handleFirstChange(curItem) {
-      this.setNextLevel(curItem.checked, this.secondLevelOps);
-    },
-    handleSecondChange(curItem) {
-      // 控制下一层级
-      const curCheckedOps = this.secondLevelOps.filter((item) => item.checked);
-      this.setPreLevel(curCheckedOps, this.curFirstLevelItem);
-      this.setNextLevel(curItem.checked, this.thirdLevelOps);
-    },
-    handleThirdChange() {
-      /*  console.log(status);
-      console.log(item); */
-      const curCheckedOps = this.thirdLevelOps.filter((item) => item.checked);
-      //控制上一层级
-      if (!curCheckedOps.length) {
-        this.curSecondLevelItem.checked = false;
-        this.curSecondLevelItem.indeterminate = false;
-      } else if (curCheckedOps.length < this.thirdLevelOps.length) {
-        this.curSecondLevelItem.checked = false;
-        this.curSecondLevelItem.indeterminate = true;
+    handleClkItem(item, index) {
+      if (index === 0) {
+        this.curItemArr = [item];
       } else {
-        this.curSecondLevelItem.checked = true;
-        this.curSecondLevelItem.indeterminate = false;
+        this.$set(this.curItemArr, index, item);
       }
+      this.updateNextLists(item, index + 1);
     },
-    setPreLevel(curCheckedOps, curLevelItem) {
-      if (!curCheckedOps.length) {
-        curLevelItem.checked = false;
-        curLevelItem.indeterminate = false;
-      } else if (curCheckedOps.length < this.thirdLevelOps.length) {
-        curLevelItem.checked = false;
-        curLevelItem.indeterminate = true;
-      } else {
-        curLevelItem.checked = true;
-        curLevelItem.indeterminate = false;
-      }
+    handleItemChange(item, index) {
+      this.$set(this.curItemArr, index, item);
+      const prefix = this.curItemArr
+        .slice(0, this.curItemArr.length - 1)
+        .map((item) => item.label)
+        .join('/');
+      // 更换了前置类型
+      this.$emit(
+        'updateList',
+        prefix,
+        this.listData[index].filter((item) => item.checked)
+      );
     },
-    setNextLevel(status, checkedItem) {
-      for (const item of checkedItem.children) {
-        item.checked = checkedItem.checked;
+    filterList(list, index) {
+      if (index === this.listData.length - 1) {
+        return list.filter((item) => item.label.includes(this.searchVal));
       }
+      return list;
+    },
+    handleSelect(value) {
+      this.$emit('selectOption', value, this.selectLabel);
     },
   },
 };
 </script>
 <style lang="less" scoped>
 .select-area {
+  margin-right: 8px;
   display: inline-block;
-  width: 420px;
+  // width: 100%;
   height: 280px;
   background-color: #ffffff;
   border-radius: 2px;
   border: 1px solid #d9d9d9;
+
   &__head {
     height: 32px;
     background-color: #f6f7fa;
     padding-left: 14px;
   }
+
   &__body {
     height: calc(100% - 32px);
   }
+
   &__search {
     height: 32px;
     padding: 8px 8px 0;
+
     .el-select {
-      width: 100px;
+      width: 80px;
+    }
+
+    /deep/ .el-input__inner {
+      // width: 100%;
     }
 
     /deep/ .el-input-group__prepend {
       background-color: #fff;
     }
   }
+
   &__list {
     display: flex;
     height: calc(100% - 48px);
-    padding: 8px 0 0 0;
+    padding: 8px 4px 0 4px;
+
     .list {
       margin: 0;
       padding-left: 0;
       height: 192px;
       flex: 1;
+      min-width: 120px;
       list-style: none;
       overflow: auto;
       border-right: 1px solid #ccc;
 
-      &:last-of-type {
-        border-right: none;
-        & > li {
-          justify-content: start;
-        }
-      }
-      & > li {
+      &>li {
         margin: 0 4px;
         display: flex;
         justify-content: space-around;
+
         &:hover {
           cursor: pointer;
           background-color: #f5f9ff;
         }
+
         &.isActive {
           background-color: #edf3ff;
         }
       }
+
+      &::-webkit-scrollbar {
+        width: 10px;
+        height: 1px;
+      }
+
+      &::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+        background: #f6f7fa;
+      }
+
+      &::-webkit-scrollbar-track {
+        /* 滚动条里面轨道 */
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background: transparent;
+      }
+    }
+
+    .checklist {
+      display: flex;
+      flex-direction: column;
+      margin: 0;
+      padding-left: 0;
+      height: 192px;
+      flex: 1;
+      min-width: 120px;
+
+      &>.el-checkbox {
+        margin: 0 4px;
+        display: flex;
+        height: 32px;
+        align-items: center;
+       padding-left: 12px;
+
+        &:hover {
+          cursor: pointer;
+          background-color: #f5f9ff;
+        }
+
+        &.isActive {
+          background-color: #edf3ff;
+        }
+      }
+
       &::-webkit-scrollbar {
         width: 10px;
         height: 1px;
