@@ -55,45 +55,42 @@ const options = {
 const tree = [
   {
     label: '广东省',
-    /*  checked: false,
-    indeterminate: false,  */
+    value: '10',
     children: [
       {
         label: '广州市',
-        /*  checked: false,
-        indeterminate: false,  */
+        value: '100',
         children: [
           {
             label: '天河区',
+            value: '1001',
             checked: false,
           },
         ],
       },
       {
         label: '深圳市',
-        /* checked: false,
-        indeterminate: false,  */
+        value: '101',
         children: [
-          { label: '宝安区', checked: false },
-          { label: '南山区', checked: false },
-          { label: '东莞区', checked: false },
-          { label: '惠州区', checked: false },
+          { label: '宝安区',value: '1011',checked: false },
+          { label: '南山区',value: '1012',checked: false },
+          { label: '东莞区',value: '1013',checked: false },
+          { label: '惠州区',value: '1014',checked: false },
         ],
       },
     ],
   },
   {
     label: '浙江省',
-    /* checked: false,
-    indeterminate: false,  */
+    value: '20',
     children: [
       {
         label: '杭州市',
-        /*  checked: false,
-        indeterminate: false, */
+        value: '200',
         children: [
           {
             label: '五菱区',
+            value: '2001',
             checked: false,
           },
         ],
@@ -102,58 +99,65 @@ const tree = [
   },
   {
     label: '江西省',
-    /* checked: false,
-    indeterminate: false, */
+    value: '30',
+    indeterminate: false,
     children: [
       {
         label: '九江市',
-        /*  checked: false,
-        indeterminate: false, */
+        value: '300',
         children: [
           {
             label: '濂溪区',
+            value: '3001',
             checked: false,
           },
           {
             label: '柴桑区',
+            value: '3002',
             checked: false,
           },
           {
             label: '八里湖区',
+            value: '3003',
             checked: false,
           },
         ],
       },
       {
         label: '南昌市',
-        /* checked: false,
-        indeterminate: false, */
+        value: '301',
+        indeterminate: false,
         children: [
           {
             label: '新建区',
+            value: '3011',
             checked: false,
           },
           {
             label: '高健区',
+            value: '3012',
             checked: false,
           },
           {
             label: '红谷区',
+            value: '3013',
             checked: false,
           },
         ],
       },
       {
         label: '吉安市',
-        /* checked: false,
-        indeterminate: false, */
+        value: '302',
+        indeterminate: false,
         children: [
           {
             label: '吉州区',
+            value: '3021',
             checked: false,
           },
           {
             label: '清远区',
+            value: '3022',
             checked: false,
           },
         ],
@@ -162,24 +166,26 @@ const tree = [
   },
   {
     label: '湖北省',
-    /* checked: false,
-    indeterminate: false, */
+    value: '40',
+    indeterminate: false,
     children: [
       {
         label: '武汉市',
-        /*    checked: false,
-        indeterminate: false, */
+        value: '401',
         children: [
           {
             label: '江岸区',
+            value: '4011',
             checked: false,
           },
           {
             label: '江汉区',
+            value: '4012',
             checked: false,
           },
           {
             label: '汉阳区',
+            value: '4013',
             checked: false,
           },
         ],
@@ -190,43 +196,52 @@ const tree = [
 const twoTree = [
   {
     label: '广东省',
+    value: '1000',
     children: [
       {
         label: '广州市',
+        value: '1000',
       },
       {
         label: '深圳市',
+        value: '1000',
       },
     ],
   },
   {
     label: '浙江省',
-
+    value: '1000',
     children: [
       {
         label: '杭州市',
+        value: '1000',
       },
     ],
   },
   {
     label: '江西省',
-
+    value: '1000',
     children: [
       {
+        value: '1000',
         label: '九江市',
       },
       {
+        value: '1000',
         label: '南昌市',
       },
       {
+        value: '1000',
         label: '吉安市',
       },
     ],
   },
   {
     label: '湖北省',
+    value: '1000',
     children: [
       {
+        value: '1000',
         label: '武汉市',
       },
     ],

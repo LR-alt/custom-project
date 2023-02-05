@@ -14,7 +14,7 @@
       <div class="select-area__list">
         <template v-for="(list, index) in lists">
           <!-- 单项 -->
-          <ul v-if="index !== panelLevels - 1" class="list" :key="index">
+          <ul v-if="index !== levels" class="list" :key="index">
             <li v-for="(item, inx) in filterList(list, index)"
               :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }"
               :key="`${item.label}${inx}`" @click="handleClkItem(item, index)">
@@ -23,10 +23,11 @@
             </li>
           </ul>
           <!-- 复选框 -->
-          <el-checkbox-group v-else v-model="curCheckedList" class="checklist" :key="`${index}-checkbox`">
-            <el-checkbox v-for="(item, inx) in filterList(list, index)"
-              :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }" :label="item.value"
-              :key="`${item.label}${inx}`" @change="(status) => handleChangeItem(item, index, status)">
+          <el-checkbox-group v-else v-model="checkedList" class="checklist" :key="`${index}-checkbox`">
+            <el-checkbox v-for="(item, inx) in filterList(list)"
+              :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }"
+              :label="formatLabel(item.value, index)" :key="`${item.label}${inx}`"
+              @change="() => handleChangeItem(item, index)">
               <span>{{ item.label }}</span>
             </el-checkbox>
           </el-checkbox-group>
@@ -40,6 +41,11 @@
 export default {
   name: 'select-area',
   props: {
+    value: {
+      type: Array,
+      default: () => [],
+      required: true,
+    },
     title: {
       type: String,
       default: '',
@@ -56,23 +62,32 @@ export default {
       type: Number,
       default: 3,
     },
+    tags: {
+      type: Array,
+      default: () => [],
+    }
   },
-  components: {},
+  model: {
+    prop: 'value',
+    event: 'change',
+  },
   data() {
     return {
       searchVal: '',
       selectVal: 1,
+      curCheckedLabels: '',
       lists: [],
       curItemArr: [],
-      curPrefixes: '',
-      checkedData: {},
-      curCheckedList: [],
+      mapCheckedList: {},
       mapAreaNames: ['省份', '地市', '区县'],
     };
   },
   computed: {
+    levels() {
+      return this.isAllowSelect ? this.selectVal : this.panelLevels - 1;
+    },
     selectAreaType() {
-      return this.mapAreaNames[this.panelLevels - 1];
+      return this.mapAreaNames[this.levels];
     },
     selectLabel() {
       const curSelectItem =
@@ -85,60 +100,68 @@ export default {
     isAllowSelect() {
       return Boolean(this.selectOps.length);
     },
-  },
-  mounted() {
-    this.initCheckData();
+    labelInx() {
+      if (this.isAllowSelect) {
+        return this.levels;
+      }
+      return this.levels ? this.levels - 1 : this.levels;
+    },
+    checkedList: {
+      get() {
+        return this.value;
+      },
+      set(val) {
+        this.$nextTick(() => {
+          this.$emit('update:tags', val.map(value => {
+            return {
+              value,
+              label: this.mapCheckedList[value],
+            }
+          }));
+        })
+        this.$emit('change', val)
+      }
+    }
   },
   watch: {
-    selectVal: {
-      handler() {
-        // this.flatTree(this.treeData, [], Number(value));
-      },
-    },
+    levels(newLevels) {
+      console.log('debugger')
+      this.lists = [this.treeData];
+      this.curItemArr.length = newLevels + 1;
+    }
+  },
+  mounted() {
+    this.lists = [this.treeData];
   },
   methods: {
-    initCheckData() {
-
-      this.flatTree(
-        this.treeData,
-      );
-    },
-    // 根据数据的层级，渲染
-    flatTree(tree) {
-      this.lists.push(tree);
-    },
     handleClkItem(item, index) {
-      // 单选
-      if (index < this.panelLevels - 1) {
-        this.lists = [...this.lists.slice(0, index + 1), item.children];
-      } else { // 多选
-      }
+      this.lists = [...this.lists.slice(0, index + 1), item.children];
       this.$set(this.curItemArr, index, item);
-      const curPrefix = this.curItemArr.slice(0, index + 1).map(item => item.label).join('/');
-
-      if (!this.checkedData[curPrefix]) {
-        this.checkedData[curPrefix] = [];
-      }
-      this.curCheckedList = this.checkedData[curPrefix];
     },
-    handleChangeItem(item, index, status) {
+    handleChangeItem(item, index) {
       this.$set(this.curItemArr, index, item);
-      // debugger;
-      const curPrefix = this.curItemArr.slice(0, index || 1).map(item => item.label).join('/');
-      this.checkedData[curPrefix] = this.curCheckedList;
-      /* if (!this.checkedData[curPrefix]) {
-        this.checkedData[curPrefix] = this.curCheckedList;
-      } */
-      /* if (this.curPrefixes && this.curPrefixes !== curPrefix) {
-        this.checkedData[this.curPrefixes] = this.curCheckedList;
-      } */
-    },
-
-    filterList(list, index) {
-      if (index === this.lists.length - 1) {
-        return list.filter((item) => item.label.includes(this.searchVal));
+      const { labels, values } = this.getCurItemData(this.curItemArr);
+      this.mapCheckedList[values.join('/')] = labels.join('');
+      // 清空之前的项
+      const curPrefix = labels.slice(0, this.labelInx).join('/');
+      if (this.curCheckedLabels && this.curCheckedLabels !== curPrefix) {
+        this.checkedList = [values.join('/')];
       }
-      return list;
+      this.curCheckedLabels = curPrefix;
+    },
+    getCurItemData(curItemArr) {
+      const labels = [], values = [];
+      curItemArr.forEach(item => {
+        labels.push(item.label);
+        values.push(item.value);
+      })
+      return { labels, values }
+    },
+    formatLabel(curVal, inx) {
+      return this.curItemArr.slice(0, inx).map(item => item.value).concat(curVal).join('/');
+    },
+    filterList(list) {
+      return list.filter((item) => item.label.includes(this.searchVal));
     },
     handleSelect(value) {
       this.$emit('selectOption', value, this.selectLabel);

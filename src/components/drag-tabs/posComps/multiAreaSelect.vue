@@ -3,27 +3,27 @@
   <div class="multiArea-select">
     <div class="multiArea-select__area">
       <selectArea
-        :checkedData="checkedData"
+        v-model="checkedList"
         :selectOps="selectOps"
         :treeData="JSON.parse(JSON.stringify(tree))"
         @updateList="updateCheckedList"
       />
     </div>
-    <div class="multiArea-select__mall">
+   <!--  <div class="multiArea-select__mall">
       <selectArea 
         :checkedData="checkedMallData"
         :panelLevels="2"
         :treeData="JSON.parse(JSON.stringify(mallTree))"
         @updateList="updateCheckedMallList" />
-    </div>
+    </div> -->
     <div class="multiArea-select__selected">
-      <selectedLabels v-bind="$attrs" :tagData="checkedData" @deleteTag="deleteTag" />
+      <!-- <selectedLabels v-bind="$attrs" :tagData="checkedData" @deleteTag="deleteTag" /> -->
     </div>
   </div>
 </template>
 
 <script>
-import selectArea from '../selectArea1.vue';
+import selectArea from '../selectArea2.vue';
 import selectedLabels from '../selectedLabels.vue';
 export default {
   name: 'multiArea-select',
@@ -50,10 +50,8 @@ export default {
         { label: '区县', value: 2 },
       ],
       // 默认回显数据
-      checkedData: {
-        prefix: '',
-        list: [{ label: '' }, { label: '' }],
-      },
+      checkedList: [],
+      tags: [],
       checkedMallData: {
         prefix: '',
         list: [{ label: '' }, { label: '' }],
@@ -64,7 +62,7 @@ export default {
   watch: {},
   methods: {
     updateCheckedList(prefix, newCheckedList) {
-      if (this.checkedData.prefix && this.checkedData.prefix !== prefix) {
+      if (this.checkedList.prefix && this.checkedData.prefix !== prefix) {
         this.checkedData.list.forEach((item) => {
           item.checked = false;
         });

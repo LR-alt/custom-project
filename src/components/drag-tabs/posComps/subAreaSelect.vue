@@ -3,24 +3,24 @@
   <div class="subArea-select" :class="isVertical ? 'flex-vertical' : ''">
     <selectArea
       class="subArea-select__select"
-      :checkedData="checkedData"
+      v-model="checkedList"
+      :tags.sync="tags"
       :treeData="JSON.parse(JSON.stringify(tree))"
       v-bind="$attrs"
-      @updateList="updateCheckedList"
     />
     <selectedLabels
       class="subArea-select__show"
       :class="isVertical ? mapWidths[areaType] : ''"
       v-bind="$attrs"
-      :tagData="checkedData"
+      :tags="tags"
+      @delTags="delTags"
       @updateTags="updateTags"
-      @deleteTag="deleteTag"
     />
   </div>
 </template>
 
 <script>
-import selectArea from '../selectArea.vue';
+import selectArea from '../selectArea2.vue';
 import selectedLabels from '../selectedLabels.vue';
 export default {
   name: 'sub-area-select',
@@ -42,10 +42,8 @@ export default {
   data() {
     return {
       // 默认回显数据
-      checkedData: {
-        prefix: '',
-        list: [{ label: '' }, { label: '' }],
-      },
+      checkedList: [],
+      tags: [],
       mapWidths: {
         省份: 'w-210',
         城市: 'w-250',
@@ -53,22 +51,17 @@ export default {
       },
     };
   },
-  mounted() {},
-  watch: {},
-  methods: {
-    updateCheckedList(prefix, newCheckedList) {
-      if (this.checkedData.prefix && this.checkedData.prefix !== prefix) {
-        this.checkedData.list.forEach((item) => {
-          item.checked = false;
-        });
+  watch: {
+    tags(newTags) {
+      if (Array.isArray(newTags)) {
+        this.updateTags(newTags.map(tag => tag.label));
       }
-      this.checkedData.prefix = prefix;
-      this.checkedData.list = newCheckedList;
-    },
-    deleteTag(tag) {
-      const prefix = this.checkedData.prefix.replace(/\//g, '');
-      const curItem = this.checkedData.list.find((item) => tag === `${prefix}${item.label}`);
-      curItem.checked = false;
+    }
+  },
+  methods: {
+    delTags(tag) {
+      this.tags = this.tags.filter(item => item.label !== tag.label);
+      this.checkedList = this.checkedList.filter(val => val !== tag.value);
     },
     updateTags(tags) {
       if (this.isVertical) {

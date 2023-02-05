@@ -3,13 +3,13 @@
     <div class="selected-labels__head">已选{{ title || mapAreaNames[panelLevels - 1] }}</div>
     <div class="selected-labels__body">
       <el-tag
-        v-for="tag in selectTags"
-        :key="tag"
+        v-for="tag in tags"
+        :key="tag.label"
         type="info"
         size="small"
         closable
         @close="handleClose(tag)"
-        >{{ tag }}</el-tag
+        >{{ tag.label }}</el-tag
       >
     </div>
   </div>
@@ -19,12 +19,9 @@
 export default {
   name: 'selected-labels',
   props: {
-    tagData: {
-      type: Object,
-      default: () => ({
-        prefix: '',
-        list: [],
-      }),
+    tags: {
+      type: Array,
+      default: () => ([]),
     },
     title: {
       type: String,
@@ -35,32 +32,14 @@ export default {
       default: 3,
     },
   },
-  components: {},
   data() {
     return {
-      selectTags: [],
       mapAreaNames: ['省份', '地市', '区县'],
     };
   },
-  computed: {},
-  watch: {
-    tagData: {
-      handler(newTagData) {
-        let { prefix, list } = newTagData;
-        prefix = prefix.replace(/\//g, '');
-        this.selectTags = list
-          .filter((item) => item.checked)
-          .map((item) => `${prefix}${item.label}`);
-        // 更新tags到上层组件
-        this.$emit('updateTags', this.selectTags);
-      },
-      deep: true,
-      immediate: true,
-    },
-  },
   methods: {
     handleClose(tag) {
-      this.$emit('deleteTag', tag);
+      this.$emit('delTags', tag);
     },
   },
 };
