@@ -2,12 +2,26 @@
   <div class="select-area">
     <div class="select-area__head">请选择{{ title || selectAreaType }}</div>
     <div class="select-area__body">
-      <el-form class="select-area__search">
-        <el-input v-model="searchVal" class="input-with-select" :placeholder="`搜索${selectLabel || selectAreaType}`"
-          @submit.native.prevent>
-          <el-select v-if="selectOps.length" v-model="selectVal" @change="handleSelect" slot="prepend"
-            placeholder="请选择">
-            <el-option v-for="opt in selectOps" :key="opt.label" :value="opt.value" :label="opt.label" />
+      <el-form class="select-area__search" size="mini">
+        <el-input
+          v-model="searchVal"
+          class="input-with-select"
+          :placeholder="`搜索${selectLabel || selectAreaType}`"
+          @submit.native.prevent
+        >
+          <el-select
+            v-if="selectOps.length"
+            v-model="selectVal"
+            @change="handleSelect"
+            slot="prepend"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="opt in selectOps"
+              :key="opt.label"
+              :value="opt.value"
+              :label="opt.label"
+            />
           </el-select>
         </el-input>
       </el-form>
@@ -15,19 +29,30 @@
         <template v-for="(list, index) in lists">
           <!-- 单项 -->
           <ul v-if="index !== levels" class="list" :key="index">
-            <li v-for="(item, inx) in filterList(list, index)"
+            <li
+              v-for="(item, inx) in list"
               :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }"
-              :key="`${item.label}${inx}`" @click="handleClkItem(item, index)">
+              :key="`${item.label}${inx}`"
+              @click="handleClkItem(item, index)"
+            >
               <span>{{ item.label }}</span>
               <i class="el-icon-arrow-right"></i>
             </li>
           </ul>
           <!-- 复选框 -->
-          <el-checkbox-group v-else v-model="checkedList" class="checklist" :key="`${index}-checkbox`">
-            <el-checkbox v-for="(item, inx) in filterList(list)"
+          <el-checkbox-group
+            v-else
+            v-model="checkedList"
+            class="checklist"
+            :key="`${index}-checkbox`"
+          >
+            <el-checkbox
+              v-for="(item, inx) in filterList(list)"
               :class="{ isActive: curItemArr[index] && curItemArr[index].label === item.label }"
-              :label="formatLabel(item.value, index)" :key="`${item.label}${inx}`"
-              @change="() => handleChangeItem(item, index)">
+              :label="formatLabel(item.value, index)"
+              :key="`${item.label}${inx}`"
+              @change="() => handleChangeItem(item, index)"
+            >
               <span>{{ item.label }}</span>
             </el-checkbox>
           </el-checkbox-group>
@@ -65,7 +90,7 @@ export default {
     tags: {
       type: Array,
       default: () => [],
-    }
+    },
   },
   model: {
     prop: 'value',
@@ -112,30 +137,36 @@ export default {
       },
       set(val) {
         this.$nextTick(() => {
-          this.$emit('update:tags', val.map(value => {
-            return {
-              value,
-              label: this.mapCheckedList[value],
-            }
-          }));
-        })
-        this.$emit('change', val)
-      }
-    }
+          this.$emit(
+            'update:tags',
+            val.map((value) => {
+              return {
+                value,
+                label: this.mapCheckedList[value],
+              };
+            })
+          );
+        });
+        this.$emit('change', val);
+      },
+    },
   },
   watch: {
     levels(newLevels) {
-      console.log('debugger')
-      this.lists = [this.treeData];
+      this.lists = [this.treeData, [], []].slice(0, newLevels + 1);
       this.curItemArr.length = newLevels + 1;
-    }
+    },
   },
   mounted() {
-    this.lists = [this.treeData];
+    this.lists = [this.treeData, [], []].slice(0, this.levels + 1);
   },
   methods: {
     handleClkItem(item, index) {
       this.lists = [...this.lists.slice(0, index + 1), item.children];
+      this.$set(this.lists, index + 1, item.children);
+      if (index === 0 && this.levels === 2) {
+        this.$set(this.lists, index + 2, []);
+      }
       this.$set(this.curItemArr, index, item);
     },
     handleChangeItem(item, index) {
@@ -150,15 +181,20 @@ export default {
       this.curCheckedLabels = curPrefix;
     },
     getCurItemData(curItemArr) {
-      const labels = [], values = [];
-      curItemArr.forEach(item => {
+      const labels = [],
+        values = [];
+      curItemArr.forEach((item) => {
         labels.push(item.label);
         values.push(item.value);
-      })
-      return { labels, values }
+      });
+      return { labels, values };
     },
     formatLabel(curVal, inx) {
-      return this.curItemArr.slice(0, inx).map(item => item.value).concat(curVal).join('/');
+      return this.curItemArr
+        .slice(0, inx)
+        .map((item) => item.value)
+        .concat(curVal)
+        .join('/');
     },
     filterList(list) {
       return list.filter((item) => item.label.includes(this.searchVal));
@@ -173,7 +209,6 @@ export default {
 .select-area {
   margin-right: 8px;
   display: inline-block;
-  // width: 100%;
   height: 280px;
   background-color: #ffffff;
   border-radius: 2px;
@@ -190,15 +225,11 @@ export default {
   }
 
   &__search {
-    height: 32px;
+    height: 40px;
     padding: 8px 8px 0;
 
     .el-select {
       width: 80px;
-    }
-
-    /deep/ .el-input__inner {
-      // width: 100%;
     }
 
     /deep/ .el-input-group__prepend {
@@ -208,8 +239,8 @@ export default {
 
   &__list {
     display: flex;
-    height: calc(100% - 48px);
-    padding: 8px 4px 0 4px;
+    height: calc(100% - 40px);
+    padding: 8px 8px 0 8px;
 
     .list {
       margin: 0;
@@ -221,7 +252,7 @@ export default {
       overflow: auto;
       border-right: 1px solid #ccc;
 
-      &>li {
+      & > li {
         margin: 0 4px;
         display: flex;
         align-items: center;
@@ -265,7 +296,7 @@ export default {
       flex: 1;
       min-width: 120px;
 
-      &>.el-checkbox {
+      & > .el-checkbox {
         margin: 0 4px;
         display: flex;
         height: 32px;

@@ -350,4 +350,22 @@ const mallTree = [
     ],
   },
 ]
-export { options, tree, twoTree, oneTree, mallTree };
+const baseTree = [
+  {
+    prefix: ['广东省', '深圳市'],
+    label: '南山科技园',
+  },
+  {
+    prefix: ['广东省', '深圳市'],
+    label: '天安云谷',
+  },
+  {
+    prefix: ['广东省', '广州市'],
+    label: '金荣达工业园',
+  },
+  {
+    prefix: ['广东省', '深圳市'],
+    label: '科兴科学园',
+  },
+];
+export { options, tree, twoTree, oneTree, mallTree, baseTree };
