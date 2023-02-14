@@ -5,7 +5,7 @@
       <selectArea v-model="checkedList" :tags.sync="tags" :selectOps="selectAreaOps" :treeData="tree" />
     </div>
     <div class="multiArea-select__mall">
-      <selectScene ref="selectSceneRef" :selectOps="selectOps" :options="selectList" :checkedData="checkedData"
+      <selectScene ref="selectSceneRef" :selectOps="selectOps" :options="selectList" v-model="checkedData"
         @handleSelect="updateSceneList" @sceneCheck="handleSceneChecked" />
     </div>
     <div class="multiArea-select__selected">
@@ -54,11 +54,11 @@ export default {
       checkedScenes: [],
       selectVal: '',
       checkedData: {
-        '商场':[],
-        '园区':[],
-        '学校':[],
-        '景区':[],
-        '机场':[],
+        '商场': [],
+        '园区': [],
+        '学校': [],
+        '景区': [],
+        '机场': [],
         def: []
       },
       selectOps: [
