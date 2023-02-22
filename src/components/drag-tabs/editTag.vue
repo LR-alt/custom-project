@@ -1,14 +1,12 @@
 <!-- 自定义类别组件 -->
 <template>
-	<span class="edit-tag" :class="{ active: isActive }">
+	<span class="edit-tag" :class="{ active: isEdit }">
 		<el-tag
 			:style="{ visibility: !isEdit ? 'visible' : 'hidden' }"
 			class="tag"
-			size="medium"
-			closable
-      @click="handleClkTag()"
-			@dblclick.native="() => handleDblclick()"
-      @close="delTag()"
+			size="mini"
+			type="info"
+      @click="handleClkTag"
 			>{{ label }}</el-tag
 		>
 		<el-input
@@ -35,14 +33,14 @@
         default: '',
         required: true,
       },
-			isActive: {
+			isEdit: {
 				type: Boolean,
 				default: false,
-			},
+			}
 		},
 		data() {
 			return {
-        isEdit: false,
+        
 			};
 		},
     computed: {
@@ -66,19 +64,13 @@
 		watch: {},
 		methods: {
 			handleBlur() {
-				this.isEdit = !this.isEdit;
+				// this.isEdit = !this.isEdit;
         this.$emit('blurTag');
 			},
       handleClkTag(item) {
         this.$emit('clickTag', item);
       },
-			handleDblclick() {
-				this.isEdit = !this.isEdit;
-        this.$emit('dblclickTag');
-			},
-      delTag () {
-        this.$emit('delTag');
-      }
+
 		},
 	};
 </script>
@@ -88,26 +80,25 @@
 		position: relative;
 		display: inline-block;
 		min-width: 60px;
-		border: 1.5px solid #d9ecff;
+		max-width: 300px;
+		line-height: 24px;
+		height: 24px;
+		border: 1.5px solid transparent;
 		&.active {
-			border: 1.5px solid #66b1ff;
+			border: 1.5px solid #409eff;
 		}
 		.tag {
 			display: flex;
 			padding: 0 8px;
 			width: 100%;
+			height: 100%;
 			justify-content: end;
 			align-items: center;
 			border-radius: 0;
 			border: none;
 			color: #454545;
-			background-color: #edf3ff;
 			&:hover {
 				cursor: pointer;
-			}
-			/deep/ .el-icon-close {
-				top: 0;
-				font-size: 16px;
 			}
 		}
 		.edit-input {
@@ -119,6 +110,7 @@
 			height: 100%;
 			/deep/ .el-input__inner {
 				padding: 0 8px;
+				height: 100%;
 				outline: none;
 				border: none;
 			}

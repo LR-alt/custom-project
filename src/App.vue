@@ -1,8 +1,8 @@
 <!--
  * @Date: 2022-10-28 10:47:45
- * @LastEditors: 刘荣 liurong@mastercom.cn
- * @LastEditTime: 2022-11-28 20:33:16
- * @FilePath: \common-project\elementui-component\src\App.vue
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2023-02-19 21:13:08
+ * @FilePath: \.leetcodee:\componyProject\element-comps\elementui-common-comps\src\App.vue
 -->
 <template>
   <div id="app">
@@ -22,6 +22,7 @@
 // import Test from './components/custom-category/test.vue';
 // import Test from './components/form-builder-comp/test.vue';
 import Test from './components/drag-tabs/test.vue'; 
+// import Test from './components/valid-input/test.vue'
 export default {
   name: 'App',
   components: {
