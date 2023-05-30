@@ -1,22 +1,91 @@
+<!--
+ * @Date: 2022-10-19 09:42:00
+ * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
+ * @LastEditTime: 2023-05-20 15:55:08
+ * @FilePath: \webStormProjectse:\componyProject\element-comps\elementui-common-comps\src\components\valid-input\test.vue
+-->
 <template>
-	<div class="valid-input">
-		<el-input v-model="value" @input="handleInput" />
-	</div>
+	<checkDetail class="check-detail" :data="detail" :columns="columns">
+		<template #affairType>
+			<el-input
+				v-model="detail.affairType"
+				type="text"
+				placeholder="请输入事务类型"
+				clearable
+			/>
+		</template>
+		<template #remindSize>
+			<el-select
+				v-model="detail.remindSize"
+				class="w-full"
+				placeholder="请选择"
+				clearable
+			>
+				<el-option
+					v-for="it in remindSizeOps"
+					:key="it.value"
+					:label="it.label"
+					:value="it.value"
+				/>
+			</el-select>
+		</template>
+		<template #smsContent>
+			<el-input
+				v-model="detail.smsContent"
+				type="textarea"
+				:rows="4"
+				placeholder="请输入事务类型"
+				clearable
+			/>
+		</template>
+	</checkDetail>
 </template>
-
 <script>
+	import { affairColsLast } from './static';
+	// import checkDetail from './check-detail.vue';
+	import checkDetail from './check-detailLast.vue'
 	export default {
-	  name: 'valid-input',
-	  data() {
-	    return {
-	      value: ''
-	    }
-	  },
-	  methods: {
-	    handleInput(val) {
-	      console.log(val);
-	      this.value = val.replace(/[^a-zA-Z0-9\u4e00-\u9fa5]/g, '');
-	    }
-	  }
-	}
+		name: 'check--test',
+		components: {
+			checkDetail,
+		},
+		props: {
+			
+		},
+		data() {
+			return {
+				detail: {
+					creatorName: '',
+					createTime: '',
+					affairType: '',
+					remindSize: '',
+					remindTime: '',
+					isEffect: '',
+					remindObject: '',
+					smsContent: '',
+					sub1: '',
+					sub2: '',
+				},
+				remindSizeOps: [
+					{ label: 'max', value: 'max' },
+					{ label: 'min', value: 'min' },
+				],
+				columns: affairColsLast,
+			};
+		},
+		mounted() {
+			this.getDetails();
+		},
+		methods: {
+			getDetails() {},
+			checkRecords() {},
+		},
+	};
 </script>
+
+<style lang="less" scoped>
+	/* .check-detail {
+		height: 500px;
+		border-collapse: collapse;
+	} */
+</style>

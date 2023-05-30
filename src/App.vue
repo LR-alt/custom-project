@@ -1,12 +1,12 @@
 <!--
  * @Date: 2022-10-28 10:47:45
  * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-02-19 21:13:08
- * @FilePath: \.leetcodee:\componyProject\element-comps\elementui-common-comps\src\App.vue
+ * @LastEditTime: 2023-05-08 22:24:58
+ * @FilePath: \webStormProjectse:\componyProject\element-comps\elementui-common-comps\src\App.vue
 -->
 <template>
   <div id="app">
-    <Test :text="text" taskType="templateTask"/>
+    <Test taskType="templateTask" />
   </div>
 </template>
 
@@ -21,14 +21,16 @@
 // import Test from './components/multi-select-tree/test.vue';
 // import Test from './components/custom-category/test.vue';
 // import Test from './components/form-builder-comp/test.vue';
-import Test from './components/drag-tabs/test.vue'; 
+// import Test from './components/drag-tabs/test.vue'; 
 // import Test from './components/valid-input/test.vue'
+// import Test from './components/test-cacsder/test.vue'
+import Test from './components/valid-input/test.vue'
 export default {
   name: 'App',
   components: {
     Test
   },
-  data () {
+  data() {
     return {
       text: '王阳明王阳明'.repeat(30)
     }
@@ -37,9 +39,11 @@ export default {
 </script>
 
 <style>
-html,body {
+html,
+body {
   height: 100%;
 }
+
 #app {
   height: 100%;
 }
