@@ -1,5 +1,5 @@
 <script>
-	import { affairColsLast, testCols } from './static';
+	import { affairColsLast } from './static';
 	export default {
 		name: 'check-detail-last',
 		props: {
@@ -21,21 +21,22 @@
 		},
 		methods: {
 			createTdTag({ label, prop, rowspan, colspan }) {
-				if (prop) {
-					return [
-						<td class='tb_th' rowspan={rowspan}>
-							{this.$scopedSlots[label] ? this.$scopedSlots[label]() : label}
-						</td>,
-						<td class='tb_td' rowspan={rowspan} colspan={colspan}>
-							{this.$scopedSlots[prop] ? this.$scopedSlots[prop]() : prop}
-						</td>,
-					];
+				const th = (
+					<td class='tb_th' rowspan={rowspan} colspan={1}>
+						{this.$scopedSlots[label] ? this.$scopedSlots[label]() : label}
+					</td>
+				);
+				const td = (
+					<td class='tb_td' rowspan={rowspan} colspan={colspan}>
+						{this.$scopedSlots[prop] ? this.$scopedSlots[prop]() : prop}
+					</td>
+				);
+				if (prop && label) {
+					return [th, td];
+				} else if (prop) {
+					return [td];
 				} else if (label) {
-					return (
-						<td class='tb_th' rowspan={rowspan} colspan={colspan}>
-							{this.$scopedSlots[label] ? this.$scopedSlots[label]() : label}
-						</td>
-					);
+					return th;
 				}
 				return '';
 			},
@@ -112,6 +113,13 @@
 </script>
 
 <style lang="less" scoped>
+	.tb_th {
+		background-color: #cdcdcd;
+		text-align: center;
+	}
+	.tb_td {
+		text-align: center;
+	}
 	.title {
 		font-weight: bold;
 		width: 15%;
