@@ -1,11 +1,11 @@
 <!--
  * @Date: 2022-10-19 09:42:00
  * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-05-20 15:55:08
- * @FilePath: \webStormProjectse:\componyProject\element-comps\elementui-common-comps\src\components\valid-input\test.vue
+ * @LastEditTime: 2023-06-03 18:48:55
+ * @FilePath: \mtex-static-evase:\componyProject\element-comps\elementui-common-comps\src\components\valid-input\test.vue
 -->
 <template>
-	<checkDetail class="check-detail" :data="detail" :columns="columns">
+<!-- 	<checkDetail class="check-detail" :data="detail" :columns="columns">
 		<template #affairType>
 			<el-input
 				v-model="detail.affairType"
@@ -38,16 +38,19 @@
 				clearable
 			/>
 		</template>
-	</checkDetail>
+	</checkDetail> -->
+	<chart />
 </template>
 <script>
 	import { affairColsLast } from './static';
 	// import checkDetail from './check-detail.vue';
-	import checkDetail from './check-detailLast.vue'
+	// import checkDetail from './check-detailLast.vue'
+	import chart from './chart.vue'
 	export default {
 		name: 'check--test',
 		components: {
-			checkDetail,
+			// checkDetail,
+			chart
 		},
 		props: {
 			
