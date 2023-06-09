@@ -60,6 +60,13 @@ export default {
   /deep/ .el-tabs__item {
     padding-left: 12px !important;
     padding-right: 0 !important;
+    &.is-active {
+       background-color: #edf3ff;
+       .cycle {
+          background-color: #3978fb;
+          color: #fff;
+       }
+    }
   }
   /deep/ .el-tabs__nav-wrap {
     width: 200px;

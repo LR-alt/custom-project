@@ -28,11 +28,11 @@
           <el-form-item v-if="form.areaSetting !== '无范围'" label="选择区域:">
             <Keep-alive>
               <component
-                :key="compData[selectLabel].name + compData[selectLabel].type"
-                :is="compData[selectLabel].name"
-                :areaType="compData[selectLabel].type"
-                :panelLevels="compData[selectLabel].panelLevels"
-                :selectTags="compData[selectLabel].tags"
+                :key="curComp.name + curComp.type"
+                :is="curComp.name"
+                :areaType="curComp.type"
+                :panelLevels="curComp.panelLevels"
+                :selectTags="curComp.tags"
               />
             </Keep-alive>
           </el-form-item>
@@ -97,23 +97,27 @@ export default {
           type: '省份',
           panelLevels: 1,
           tags: [],
+          conclusion: '',
         },
         '区域-城市': {
           name: 'subAreaSelect',
           type: '城市',
           panelLevels: 2,
           tags: [],
+          conclusion: '',
         },
         '区域-区县': {
           name: 'subAreaSelect',
           type: '区县',
           panelLevels: 3,
           tags: [],
+          conclusion: '',
         },
         '区域-多边形区域': {
           name: 'multiAreaSelect',
           type: '多边形区域',
           tags: [],
+          conclusion: '',
         },
         '区域-位置点': '',
         '区域-无范围': '',
@@ -122,18 +126,21 @@ export default {
           type: '省份',
           panelLevels: 1,
           tags: [],
+          conclusion: '',
         },
         '区域对-城市': {
           name: 'areaPairSelect',
           type: '城市',
           panelLevels: 2,
           tags: [],
+          conclusion: '',
         },
         '区域对-区县': {
           name: 'areaPairSelect',
           type: '区县',
           panelLevels: 3,
           tags: [],
+          conclusion: '',
         },
       },
       conclusion: '',
@@ -146,17 +153,20 @@ export default {
     },
     result() {
       const { areaType, areaSetting } = this.form;
-      return `${areaType}、${areaSetting}、${this.conclusion}`;
+      return `${areaType}、${areaSetting}、${this.curComp.conclusion}`;
     },
+    curComp() {
+      return this.compData[this.selectLabel];
+    }
   },
   watch: {},
   methods: {
     getTags(tags) {
       if (this.form.areaType !== '区域对') {
-        this.conclusion = tags.join('、');
+        this.curComp.conclusion = tags.join('、');
       } else {
         const [srcTags, tarTags] = tags;
-        this.conclusion = `源${this.form.areaSetting}：${srcTags.join('、')}；目的${
+        this.curComp.conclusion = `源${this.form.areaSetting}：${srcTags.join('、')}；目的${
           this.form.areaSetting
         }：${tarTags.join('、')}`;
       }
@@ -211,11 +221,5 @@ export default {
       }
     }
   }
-}
-.text-ellipsis {
-  width: 96%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 </style>
