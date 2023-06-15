@@ -33,43 +33,44 @@ const affairCols = [
 
 const affairColsLast = [
   [
-    { prop: 'creatorName', label: '创建人', colspan: 3 },
+    { prop: 'creatorName', label: '创建人', colspan: 1 },
     { prop: 'createTime', label: '创建时间', colspan: 3 },
   ],
   [
-    { prop: 'affairType', label: '事物类型', colspan: 7 },
+    { prop: 'affairType', label: '事物类型' },
   ],
   [
-    { prop: 'isEffect', label: '是否立即失效', colspan: 7 }
+    { prop: 'isEffect', label: '是否立即失效' }
   ],
   [
-    { prop: 'remindObject', label: '提醒对象', colspan: 7 }
+    { prop: 'remindObject', label: '提醒对象' }
   ],
   [
     {
       label: '是否立即生效',
-      rowspan: 4,
+      grids: 4,
       children: [
-        { prop: 'sub1', colspan: 6 },
+        { prop: 'sub1' },
         {
           label: '子详情2',
-          rowspan: 2,
           children: [
-            { label: '孙详情1', prop: 'tub1', colspan: 5 },
-            { label: '孙详情2', prop: 'tub2', colspan: 5 },
+            { label: '孙详情1', prop: 'tub1' },
+            { label: '孙详情2', prop: 'tub2' },
           ]
         },
-        { label: '子详情3 ', prop: 'sub3', colspan: 6 },
+        { label: '子详情3 ', prop: 'sub3'},
       ]
     },
-    /* {
+    {
+      grids: 2,
       children: [
-        {label: '列2', prop: 'col2', rowspan: 4},
+        {label: '列2', prop: 'col2'},
+        {label: '列2.2', prop: 'col2.2'},
       ]
-    }, */
+    },
   ],
   [
-    { prop: 'smsContent', label: '短信内容', colspan: 7 }
+    { prop: 'smsContent', label: '短信内容' }
   ],
 ]
 const testCols = {

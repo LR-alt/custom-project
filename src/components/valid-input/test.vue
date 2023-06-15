@@ -5,7 +5,7 @@
  * @FilePath: \mtex-static-evase:\componyProject\element-comps\elementui-common-comps\src\components\valid-input\test.vue
 -->
 <template>
-<!-- 	<checkDetail class="check-detail" :data="detail" :columns="columns">
+	<checkDetail class="check-detail" :data="detail" :columns="columns">
 		<template #affairType>
 			<el-input
 				v-model="detail.affairType"
@@ -38,19 +38,19 @@
 				clearable
 			/>
 		</template>
-	</checkDetail> -->
-	<chart />
+	</checkDetail>
+	<!-- <chart /> -->
 </template>
 <script>
 	import { affairColsLast } from './static';
 	// import checkDetail from './check-detail.vue';
-	// import checkDetail from './check-detailLast.vue'
-	import chart from './chart.vue'
+	import checkDetail from './check-detailLast.vue'
+	// import chart from './chart.vue'
 	export default {
 		name: 'check--test',
 		components: {
-			// checkDetail,
-			chart
+			checkDetail,
+			// chart
 		},
 		props: {
 			
