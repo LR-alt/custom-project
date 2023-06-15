@@ -34,7 +34,7 @@ const affairCols = [
 const affairColsLast = [
   [
     { prop: 'creatorName', label: '创建人', colspan: 1 },
-    { prop: 'createTime', label: '创建时间', colspan: 3 },
+    { prop: 'createTime', label: '创建时间', colspan: 5 },
   ],
   [
     { prop: 'affairType', label: '事物类型' },
@@ -48,24 +48,24 @@ const affairColsLast = [
   [
     {
       label: '是否立即生效',
-      grids: 4,
+      grids: 5,
       children: [
         { prop: 'sub1' },
         {
           label: '子详情2',
           children: [
-            { label: '孙详情1', prop: 'tub1' },
-            { label: '孙详情2', prop: 'tub2' },
+            { label: '孙详情1', prop: 'tub1', colspan: 2 },
+            { label: '孙详情2', prop: 'tub2',colspan: 2 },
           ]
         },
         { label: '子详情3 ', prop: 'sub3'},
       ]
     },
     {
-      grids: 2,
+      grids: 3,
       children: [
-        {label: '列2', prop: 'col2'},
-        {label: '列2.2', prop: 'col2.2'},
+        {label: '列2', prop: 'col2', rowspan: 2, colspan: 2},
+        {label: '列2.2', prop: 'col2.2', rowspan: 2, colspan: 2},
       ]
     },
   ],

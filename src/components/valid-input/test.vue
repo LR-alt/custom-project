@@ -5,7 +5,7 @@
  * @FilePath: \mtex-static-evase:\componyProject\element-comps\elementui-common-comps\src\components\valid-input\test.vue
 -->
 <template>
-	<checkDetail class="check-detail" :data="detail" :columns="columns">
+	<checkDetail class="check-detail" :detail="detail" :columns="columns">
 		<template #affairType>
 			<el-input
 				v-model="detail.affairType"
@@ -58,16 +58,16 @@
 		data() {
 			return {
 				detail: {
-					creatorName: '',
-					createTime: '',
-					affairType: '',
-					remindSize: '',
-					remindTime: '',
-					isEffect: '',
-					remindObject: '',
-					smsContent: '',
-					sub1: '',
-					sub2: '',
+					creatorName: '王天风',
+					createTime: '2012-12-12',
+					affairType: '日报',
+					remindSize: '月粒度',
+					remindTime: '2023-12-10',
+					isEffect: '是',
+					remindObject: '吉卜力',
+					smsContent: '鸡肋',
+					sub1: '详情',
+					sub2: '详情2',
 				},
 				remindSizeOps: [
 					{ label: 'max', value: 'max' },
