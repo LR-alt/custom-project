@@ -8,28 +8,6 @@
  * 
  * Copyright (c) 2023 by ${git_name_email}, All Rights Reserved. 
  */
-const affairCols = [
-  [
-    { prop: 'creatorName', label: '创建人' },
-    { prop: 'createTime', label: '创建时间' },
-  ],
-  [
-    { prop: 'affairType', label: '事物类型' },
-  ],
-  [
-    { prop: 'remindSize', label: '提醒粒度', },
-    { prop: 'remindTime', label: '提醒时间' },
-  ],
-  [
-    { prop: 'isEffect', label: '是否立即失效' }
-  ],
-  [
-    { prop: 'remindObject', label: '提醒对象' }
-  ],
-  [
-    { prop: 'smsContent', label: '短信内容' }
-  ],
-];
 
 const affairColsLast = [
   [
@@ -62,10 +40,12 @@ const affairColsLast = [
       ]
     },
     {
+      label: '列阵',
+      rowspan: 4,
       grids: 3,
       children: [
-        {label: '列2', prop: 'col2', rowspan: 2, colspan: 2},
-        {label: '列2.2', prop: 'col2.2', rowspan: 2, colspan: 2},
+        {label: '列2', prop: 'col2', rowspan: 2, colspan: 1},
+        {label: '列2.2', prop: 'col2.2', rowspan: 2, colspan: 1},
       ]
     },
   ],
@@ -73,24 +53,6 @@ const affairColsLast = [
     { prop: 'smsContent', label: '短信内容' }
   ],
 ]
-const testCols = {
-  label: '是否立即生效',
-  rowspan: 4,
-  children: [
-    { label: '子详情1', prop: 'sub1', colspan: 2 },
-    {
-      label: '子详情2',
-      rowspan: 2,
-      children: [
-        { label: '孙详情1', prop: 'tub1' },
-        { label: '孙详情2', prop: 'tub2' },
-      ]
-    },
-    { label: '子详情3 ', prop: 'sub3', colspan: 2 },
-  ]
-};
 export {
-  affairCols,
   affairColsLast,
-  testCols
 }

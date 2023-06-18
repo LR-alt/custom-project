@@ -145,34 +145,32 @@ export default {
     border: 1px solid #ebeef5;
     .el-table {
         table-layout: fixed;
-    }
-    .tb_th,
-    .tb_td {
-        padding: 8px 0;
-        border-right: 1px solid #ebeef5;
-        border-bottom: 1px solid #ebeef5;
-    }
-    .tb_th {
-        // text-align: center;
-        background-color: #f5f7fa;
-        font-size: 14px;
-        font-weight: bold;
-        color: #606266;
-    }
-    .tb_td {
-        // text-align: center;
-        font-size: 14px;
-    }
-    .cell {
-        padding-right: 10px;
-        padding-left: 10px;
-        line-height: 23px;
-        min-height: 23px;
-        text-overflow: ellipsis;
-        white-space: normal;
-        word-break: break-all;
-        overflow: hidden;
-        box-sizing: border-box;
+        .tb_th,
+        .tb_td {
+            padding: 8px 0;
+            border-right: 1px solid #ebeef5;
+            border-bottom: 1px solid #ebeef5;
+        }
+        .tb_th {
+            font-size: 14px;
+            font-weight: bold;
+            color: #606266;
+            background-color: #f5f7fa;
+        }
+        .tb_td {
+            font-size: 14px;
+        }
+        .cell {
+            padding-right: 10px;
+            padding-left: 10px;
+            line-height: 23px;
+            min-height: 23px;
+            text-overflow: ellipsis;
+            white-space: normal;
+            word-break: break-all;
+            overflow: hidden;
+            box-sizing: border-box;
+        }
     }
 }
 </style>
