@@ -1,9 +1,4 @@
-<!--
- * @Date: 2022-10-19 09:42:00
- * @LastEditors: error: error: git config user.name & please set dead value or install git && error: git config user.email & please set dead value or install git & please set dead value or install git
- * @LastEditTime: 2023-06-03 18:48:55
- * @FilePath: \mtex-static-evase:\componyProject\element-comps\elementui-common-comps\src\components\valid-input\test.vue
--->
+<!-- 测试文件 -->
 <template>
 	<checkDetail class="check-detail" :detail="detail" :columns="columns">
 		<template #affairType>
