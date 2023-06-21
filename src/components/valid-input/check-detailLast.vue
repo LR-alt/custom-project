@@ -1,10 +1,16 @@
+<!--
+尚未解决的问题
+1.树形结构的的栅格自动占位计算
+2.span 和 groups的统一问题
+3.树形结构行自动适配
+-->
 <script>
 export default {
     name: 'check-detail-last',
     props: {
         columns: {
             type: Array,
-            default: () => ([]),
+            default: () => [],
         },
         detail: {
             type: Object,
@@ -21,7 +27,7 @@ export default {
         };
     },
     methods: {
-        createTdTag({ label, prop, rowspan, colspan }, groups) {
+        createTdTag({ label, prop, rowspan, span }, groups) {
             const result = [];
             if (label) {
                 result.push(
@@ -34,7 +40,7 @@ export default {
                 groups--;
             }
             if (prop) {
-                const curColspan = colspan || groups;
+                const curColspan = span || groups;
                 result.push(
                     <td class="tb_td" rowspan={rowspan} colspan={curColspan}>
                         <div class="cell">
@@ -49,14 +55,22 @@ export default {
         },
         toFlat(item, grids = this.baseGrids) {
             const result = [];
+            let preLabel = null;
             const { label, children, rowspan } = item;
-            let preLabel = (
-                <td class="tb_th" rowspan={rowspan || this.getChildNumbers(children)} colspan={1}>
-                    <div class="cell">
-                        {this.$scopedSlots[label] ? this.$scopedSlots[label]() : label}
-                    </div>
-                </td>
-            );
+            if (label) {
+                preLabel = (
+                    <td
+                        class="tb_th"
+                        rowspan={rowspan || this.getChildNumbers(children)}
+                        colspan={1}
+                    >
+                        <div class="cell">
+                            {this.$scopedSlots[label] ? this.$scopedSlots[label]() : label}
+                        </div>
+                    </td>
+                );
+                grids--;
+            }
             const childList = this.formatChild(item.children);
 
             for (const subItem of childList) {
@@ -66,7 +80,6 @@ export default {
                     if (preLabel) {
                         tds.push(preLabel);
                         preLabel = null;
-                        grids--;
                     }
                     const subTds = this.createTdTag(subItem, grids);
                     result.push(tds.concat(subTds));
@@ -108,6 +121,33 @@ export default {
                 return pre.concat(cur);
             }, []);
         },
+        // 自动计算栅格
+        getAverageGrids(total, items) {
+            let piece = items.length;
+            const emptyIndexes = [];
+            const baseGrids = items.map((item, index) => {
+                if (item.span) {
+                    piece--;
+                    total = total - item.span - 1;
+                } else {
+                    emptyIndexes.push(index);
+                }
+                return item.span;
+            });
+            if (piece > 0) {
+                const unit = Math.floor(total / piece);
+                const restNumbers = total % piece;
+                for (let j = 0; j < piece; j++) {
+                    let curUnit = unit;
+                    if (j < restNumbers) {
+                        curUnit++;
+                    }
+                    const curEmptyInx = emptyIndexes[emptyIndexes.length - j - 1];
+                    baseGrids[curEmptyInx] = curUnit;
+                }
+            }
+            return baseGrids;
+        },
     },
     render() {
         return (
@@ -116,8 +156,14 @@ export default {
                     {this.columns.map((items, index) => {
                         const isFold = items.some((item) => item.children && item.children.length);
                         if (!isFold) {
-                            const averageGrids = this.baseGrids / (items.length || 1);
-                            return <tr key={index}>{items.map((it) => this.createTdTag(it, averageGrids)).flat()}</tr>;
+                            const averageGrids = this.getAverageGrids(this.baseGrids, items);
+                            return (
+                                <tr key={index}>
+                                    {items
+                                        .map((it, i) => this.createTdTag(it, averageGrids[i]))
+                                        .flat()}
+                                </tr>
+                            );
                         } else {
                             const foldTds = items.map((item) => this.toFlat(item, item.grids));
                             const mergeTds = this.toMergeTds(foldTds);

@@ -11,9 +11,9 @@
 
 const affairColsLast = [
   [
-    { prop: 'creatorName', label: '创建人',  },
-    { prop: 'createTime', label: '创建时间', },
-    { prop: 'creator', label: 'creator', },
+    { prop: 'creatorName', label: '创建人', span: 2 },
+    { prop: 'createTime', label: '创建时间' },
+    { prop: 'creator', label: 'creator' },
   ],
   [
     { prop: 'affairType', label: '事物类型' },
@@ -33,11 +33,11 @@ const affairColsLast = [
         {
           label: '子详情2',
           children: [
-            { label: '孙详情1', prop: 'tub1', colspan: 2 },
-            { label: '孙详情2', prop: 'tub2',colspan: 2 },
+            { label: '孙详情1', prop: 'tub1', colspan: 2},
+            { label: '孙详情2', prop: 'tub2', colspan: 2},
           ]
         },
-        { label: '子详情3 ', prop: 'sub3'},
+        { label: '子详情3 ', prop: 'sub3' },
       ]
     },
     {
