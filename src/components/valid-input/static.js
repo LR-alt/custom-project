@@ -11,7 +11,7 @@
 
 const affairColsLast = [
   [
-    { prop: 'creatorName', label: '创建人', span: 2 },
+    { prop: 'creatorName', label: '创建人', colspan: 2 },
     { prop: 'createTime', label: '创建时间' },
     { prop: 'creator', label: 'creator' },
   ],
@@ -27,14 +27,14 @@ const affairColsLast = [
   [
     {
       label: '是否立即生效',
-      grids: 5,
+      span: 5,
       children: [
         { prop: 'sub1' },
         {
           label: '子详情2',
           children: [
-            { label: '孙详情1', prop: 'tub1', colspan: 2},
-            { label: '孙详情2', prop: 'tub2', colspan: 2},
+            { label: '孙详情1', prop: 'tub1' },
+            { label: '孙详情2', prop: 'tub2' },
           ]
         },
         { label: '子详情3 ', prop: 'sub3' },
@@ -42,11 +42,11 @@ const affairColsLast = [
     },
     {
       label: '列阵',
+      span: 3,
       rowspan: 4,
-      grids: 3,
       children: [
-        {label: '列2', prop: 'col2', rowspan: 2, colspan: 1},
-        {label: '列2.2', prop: 'col2.2', rowspan: 2, colspan: 1},
+        { label: '列2', prop: 'col2', rowspan: 2 },
+        { label: '列2.2', prop: 'col2.2', rowspan: 2 },
       ]
     },
   ],
