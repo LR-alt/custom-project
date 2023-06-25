@@ -27,7 +27,7 @@ const affairColsLast = [
   [
     {
       label: '是否立即生效',
-      span: 5,
+      grids: 5,
       children: [
         { prop: 'sub1' },
         {
@@ -42,7 +42,7 @@ const affairColsLast = [
     },
     {
       label: '列阵',
-      span: 3,
+      grids: 3,
       rowspan: 4,
       children: [
         { label: '列2', prop: 'col2', rowspan: 2 },

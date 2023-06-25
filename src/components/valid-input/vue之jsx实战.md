@@ -2,6 +2,7 @@
 - JSX是一个 JavaScript 的语法扩展，全称JavaScript xml，可以很好地描述 UI 应该呈现出它应有交互的本质形式，相较于模板，它具有 JavaScript 的全部功能。
 ### 2.为什么使用JSX
 - 有时候在处理一些较为灵活和动态的场景，受限于vue中模板和脚本分离的限制，这时候可以使用jsx将两者结合在一起。
+- 面对复杂逻辑时，可以充分发挥js的语法特性，避免模板语法的限制和冗余
 ### 3.JSX的安装及使用
  ```bash 
  npm install @vue/babel-preset-jsx @vue/babel-helper-vue-jsx-merge-props
@@ -20,7 +21,7 @@ return <td rowspan={rowspan}>{label}</td>
 return <div onClick={() => this.handleClick('add')}>添加</div>
 {/* 列表渲染 （类似于v-for） */}
 return this.columns.map((tds, inx) => <tr key={inx}>{tds}</tr>);
-{/* 插槽 */}
+{/* 默认插槽 && 具名插槽 */}
 return <div class="cell">
   <span class="title">{this.$slots.title}</span>
   <span class="content">{this.$scopedSlots.title()}</span>
@@ -31,6 +32,7 @@ return <div class="cell">
 ```jsx
 {
     methods: {
+        // 由js对象生成td元素
         createTds({ label, prop, rowspan, colspan }, cols) {
             const result = [];
             if (label) {
@@ -58,8 +60,8 @@ return <div class="cell">
         // 将嵌套类型数据扁平化
         toFlat(item, span = this.baseGrids) {
             const result = [];
-            let preLabel = null;
             const { label, children, rowspan } = item;
+            let preLabel = null;
             if (label) {
                 preLabel = (
                     <td
@@ -100,6 +102,7 @@ return <div class="cell">
                 <table class="detail" border="0" cellspacing="0" cellpadding="0" width="100%">
                     {this.columns.map((items, index) => {
                         const isNest = items.some((item) => item.children?.length);
+                        // 是否为嵌套类型
                         if (isNest) {
                             const tds = items.map((item) => this.toFlat(item, item.span));
                             return this.mergeTds(tds).map((tds, inx) => <tr key={`${index}${inx}`}>{tds}</tr>);

@@ -22,9 +22,10 @@
 // import Test from './components/custom-category/test.vue';
 // import Test from './components/form-builder-comp/test.vue';
 // import Test from './components/drag-tabs/test.vue'; 
-// import Test from './components/valid-input/test.vue'
 // import Test from './components/test-cacsder/test.vue'
-import Test from './components/valid-input/test.vue'
+// import Test from './components/valid-input/test.vue'
+import Test from './components/uploadTable/test'
+
 export default {
   name: 'App',
   components: {

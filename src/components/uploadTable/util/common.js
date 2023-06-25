@@ -154,7 +154,9 @@ class UsePropState {
   }
   // set single prop state
   setPropState(row, prop, opType, val) {
-    this.propMap.get(row)[prop][opType] = val;
+    if (prop && opType) {
+      this.propMap.get(row)[prop][opType] = val;
+    }
   }
 }
 

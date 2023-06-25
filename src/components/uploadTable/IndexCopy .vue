@@ -8,7 +8,7 @@
     <!-- 展示上传的文件信息的表格 -->
     <FileTable v-bind="$attrs">
       <!-- 动态插槽 -->
-      <template v-for="item in showColumns" v-slot:[`tb_${item.prop}`]="{ row, item }">
+      <template v-for="item in showColumns" v-slot:[`tb_${item.prop}`]="{ row }">
         <slot :name="`tb_${item.prop}`" :row="row" :item="item"></slot>
       </template>
       <!-- 操作列插槽 -->

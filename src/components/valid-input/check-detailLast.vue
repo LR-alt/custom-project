@@ -1,9 +1,4 @@
-<!--
-尚未解决的问题
-1.树形结构的的栅格自动占位计算
-2.colspan 和 groups的统一问题
-3.树形结构行自动适配
--->
+<!-- 查看详情 -->
 <script>
 export default {
     name: 'check-detail-last',
@@ -11,6 +6,7 @@ export default {
         columns: {
             type: Array,
             default: () => [],
+            required: true,
         },
         detail: {
             type: Object,
@@ -51,10 +47,11 @@ export default {
             }
             return result ? (result.length === 1 ? result[0] : result) : null;
         },
-        toFlat(item, span = this.baseGrids) {
+        toFlat(item, grids = this.baseGrids) {
             const result = [];
-            let preLabel = null;
             const { label, children, rowspan } = item;
+            let preLabel = null;
+            
             if (label) {
                 preLabel = (
                     <td
@@ -67,7 +64,7 @@ export default {
                         </div>
                     </td>
                 );
-                span--;
+                grids--;
             }
 
             for (const subItem of this.getFullChild(item.children)) {
@@ -78,10 +75,10 @@ export default {
                         tds.push(preLabel);
                         preLabel = null;
                     }
-                    const subTds = this.createTds(subItem, span);
+                    const subTds = this.createTds(subItem, grids);
                     result.push(tds.concat(subTds));
                 } else if (children) {
-                    result.push(...this.toFlat(subItem, span));
+                    result.push(...this.toFlat(subItem, grids));
                 } else {
                     result.push(null);
                 }
@@ -152,8 +149,9 @@ export default {
                 <table class="detail" border="0" cellspacing="0" cellpadding="0" width="100%">
                     {this.columns.map((items, index) => {
                         const isNest = items.some((item) => item.children?.length);
+                        // 是否为嵌套类型
                         if (isNest) {
-                            const tds = items.map((item) => this.toFlat(item, item.span));
+                            const tds = items.map((item) => this.toFlat(item, item.grids));
                             return this.mergeTds(tds).map((tds, inx) => <tr key={`${index}${inx}`}>{tds}</tr>);
                         }
                         const averageGrids = this.getAverageGrids(this.baseGrids, items);
