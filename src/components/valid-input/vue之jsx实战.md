@@ -13,7 +13,7 @@ module.exports = {
     presets: ['@vue/babel-preset-jsx'],
 }
 ```
-### 4.基本语法( [使用文档](https://github.com/vuejs/jsx-vue2#installation))
+### 4.基本语法（[官方文档](https://github.com/vuejs/jsx-vue2#installation) & [推荐文章](https://segmentfault.com/a/1190000040712149#item-0-3)）
 ```jsx
 {/* 插值和属性绑定 */}
 return <td rowspan={rowspan}>{label}</td>
@@ -31,92 +31,110 @@ return <div class="cell">
 - 基于表格封装一个查看详情 / 表单编辑组件，支持数据嵌套展示、自动计算单元格占位（[完整代码](https://gitee.com/oldSports/elementui-common-comps/blob/master/src/components/valid-input/check-detailLast.vue)）。
 ```jsx
 {
-    methods: {
-        // 由js对象生成td元素
-        createTds({ label, prop, rowspan, colspan }, cols) {
-            const result = [];
-            if (label) {
-                result.push(
-                    <td class="tb_th" rowspan={rowspan} colspan={1}>
-                        <div class="cell">
-                            {this.$scopedSlots[label]?.() || label}
-                        </div>
-                    </td>
-                );
-                cols--;
-            }
-            if (prop) {
-                const curColspan = colspan || cols; 
-                result.push(
-                    <td class="tb_td" rowspan={rowspan} colspan={curColspan}>
-                        <div class="cell">
-                            {this.$scopedSlots[prop]?.() || this.detail[prop]}
-                        </div>
-                    </td>
-                );
-            }
-            return result ? (result.length === 1 ? result[0] : result) : null;
-        },
-        // 将嵌套类型数据扁平化
-        toFlat(item, span = this.baseGrids) {
-            const result = [];
-            const { label, children, rowspan } = item;
-            let preLabel = null;
-            if (label) {
-                preLabel = (
-                    <td
-                        class="tb_th"
-                        rowspan={rowspan || this.getMaxRows(children)}
-                        colspan={1}
-                    >
-                        <div class="cell">
-                            {this.$scopedSlots[label]?.() || label}
-                        </div>
-                    </td>
-                );
-                span--;
-            }
-
-            for (const subItem of this.getFullChild(item.children)) {
-                const { prop, children } = subItem;
-                if (prop) {
-                    const tds = [];
-                    if (preLabel) {
-                        tds.push(preLabel);
-                        preLabel = null;
-                    }
-                    const subTds = this.createTds(subItem, span);
-                    result.push(tds.concat(subTds));
-                } else if (children) {
-                    result.push(...this.toFlat(subItem, span));
-                } else {
-                    result.push(null);
-                }
-            }
-            return result;
-        },
-    },
-    render() {
-        return (
-            <div class="check-detail">
-                <table class="detail" border="0" cellspacing="0" cellpadding="0" width="100%">
-                    {this.columns.map((items, index) => {
-                        const isNest = items.some((item) => item.children?.length);
-                        // 是否为嵌套类型
-                        if (isNest) {
-                            const tds = items.map((item) => this.toFlat(item, item.span));
-                            return this.mergeTds(tds).map((tds, inx) => <tr key={`${index}${inx}`}>{tds}</tr>);
-                        }
-                        const averageGrids = this.getAverageGrids(this.baseGrids, items);
-                        return (
-                            <tr key={index}>
-                                {items.map((it, i) => this.createTds(it, averageGrids[i])).flat()}
-                            </tr>
-                        );
-                    })}
-                </table>
-            </div>
+  methods: {
+    createTds({ label, prop, rowspan, colspan }, cols) {
+      const result = [];
+      if (label) {
+        result.push(
+          <td class="tb_th" rowspan={rowspan} colspan={1}>
+            <div class="cell">{this.$scopedSlots[label]?.() || label}</div>
+          </td>
         );
-    }
+        cols--;
+      }
+      if (prop) {
+        const curColspan = colspan || cols;
+        result.push(
+          <td class="tb_td" rowspan={rowspan} colspan={curColspan}>
+            <div class="cell">
+              {this.$scopedSlots[prop]?.() || this.detail[prop]}
+            </div>
+          </td>
+        );
+      }
+      return result ? (result.length === 1 ? result[0] : result) : null;
+    },
+    toFlat(item, grids = this.baseGrids) {
+      const result = [];
+      const { label, children, rowspan } = item;
+      let preLabel = null;
+
+      if (label) {
+        preLabel = (
+          <td
+            class="tb_th"
+            rowspan={rowspan || this.getMaxRows(children)}
+            colspan={1}
+          >
+            <div class="cell">{this.$scopedSlots[label]?.() || label}</div>
+          </td>
+        );
+        grids--;
+      }
+
+      for (const subItem of this.getFullChild(item.children)) {
+        const { prop, children } = subItem;
+        if (prop) {
+          const tds = [];
+          if (preLabel) {
+            tds.push(preLabel);
+            preLabel = null;
+          }
+          const subTds = this.createTds(subItem, grids);
+          result.push(tds.concat(subTds));
+        } else if (children) {
+          result.push(...this.toFlat(subItem, grids));
+        } else {
+          result.push(null);
+        }
+      }
+      return result;
+    },
+    mergeTds(foldTds) {
+      const maxRow = Math.max(...foldTds.map((item) => item.length));
+      const groupTds = [];
+
+      for (let i = 0; i < maxRow; i++) {
+        const rowTds = foldTds
+          .map((item) => item[i])
+          .filter(Boolean)
+          .flat();
+        groupTds.push(rowTds);
+      }
+      return groupTds;
+    },
+  },
+  render() {
+    return (
+      <div class="check-detail">
+        <table
+          class="detail"
+          border="0"
+          cellspacing="0"
+          cellpadding="0"
+          width="100%"
+        >
+          {this.columns.map((items, index) => {
+            const isNest = items.some((item) => item.children?.length);
+            // 是否为嵌套类型
+            if (isNest) {
+              const tds = items.map((item) => this.toFlat(item, item.grids));
+              return this.mergeTds(tds).map((tds, inx) => (
+                <tr key={`${index}${inx}`}>{tds}</tr>
+              ));
+            }
+            const averageGrids = this.getAverageGrids(this.baseGrids, items);
+            return (
+              <tr key={index}>
+                {items
+                  .map((it, i) => this.createTds(it, averageGrids[i]))
+                  .flat()}
+              </tr>
+            );
+          })}
+        </table>
+      </div>
+    );
+  },
 }
 ```

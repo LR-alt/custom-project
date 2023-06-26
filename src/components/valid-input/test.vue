@@ -53,14 +53,14 @@
 		data() {
 			return {
 				detail: {
-					creatorName: '王天风',
+					creatorName: '张三',
 					createTime: '2012-12-12',
 					affairType: '日报',
 					remindSize: '月粒度',
 					remindTime: '2023-12-10',
 					isEffect: '是',
-					remindObject: '吉卜力',
-					smsContent: '鸡肋',
+					remindObject: 'stack',
+					smsContent: 'sms',
 					sub1: '详情',
 					sub2: '详情2',
 				},

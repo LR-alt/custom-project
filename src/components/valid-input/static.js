@@ -26,27 +26,27 @@ const affairColsLast = [
   ],
   [
     {
-      label: '是否立即生效',
+      label: '详情1',
       grids: 5,
       children: [
         { prop: 'sub1' },
         {
-          label: '子详情2',
+          label: '详情1-2',
           children: [
-            { label: '孙详情1', prop: 'tub1' },
-            { label: '孙详情2', prop: 'tub2' },
+            { label: '详情1-1-1', prop: 'tub1' },
+            { label: '详情1-1-2', prop: 'tub2' },
           ]
         },
-        { label: '子详情3 ', prop: 'sub3' },
+        { label: '详情1-3', prop: 'sub3' },
       ]
     },
     {
-      label: '列阵',
+      label: '详情2',
       grids: 3,
       rowspan: 4,
       children: [
-        { label: '列2', prop: 'col2', rowspan: 2 },
-        { label: '列2.2', prop: 'col2.2', rowspan: 2 },
+        { label: '详情2-1', prop: 'sub4', rowspan: 2 },
+        { label: '详情2-2', prop: 'sub5', rowspan: 2 },
       ]
     },
   ],
