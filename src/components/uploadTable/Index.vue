@@ -1,3 +1,4 @@
+<!-- 方案二：用jsx -->
 <script>
 import Attachment from './Attachment';
 import FileTable from './FileTable';

@@ -1,4 +1,4 @@
-<!-- 测试文件 -->
+<!-- 测试组件 -->
 <template>
 	<checkDetail class="check-detail" :detail="detail" :columns="columns">
 		<template #affairType>
