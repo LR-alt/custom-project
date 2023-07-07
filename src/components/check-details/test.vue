@@ -61,7 +61,7 @@
 					isEffect: '是',
 					remindObject: 'stack',
 					smsContent: 'sms',
-					sub1: '详情',
+					sub1: 'val',
 					sub2: '详情2',
 				},
 				remindSizeOps: [

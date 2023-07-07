@@ -54,6 +54,8 @@ const affairColsLast = [
     { prop: 'smsContent', label: '短信内容' }
   ],
 ]
+
+
 export {
   affairColsLast,
 }
