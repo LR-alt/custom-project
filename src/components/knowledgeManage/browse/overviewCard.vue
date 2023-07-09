@@ -52,6 +52,7 @@ export default {
             background-color: #90bef3;
         }
         .icon {
+            display: flex;
             font-size: 30px;
             color: #5cb6ff;
         }

@@ -1,4 +1,42 @@
-<!-- 查看详情 -->
+<template>
+  <div class="check-detail">
+    <table
+      class="detail"
+      border="0"
+      cellspacing="0"
+      cellpadding="0"
+      width="100%"
+    >
+      <tr v-for="(items, index) in newColumns" :key="index">
+        <template v-for="(item, inx) in items">
+          <td
+            v-if="item.label"
+            class="tb_th"
+            :rowspan="item.rowspan"
+            colspan="1"
+            :key="`${index}-${inx}-label`"
+          >
+            <div class="cell">
+              <slot :name="item.label">{{ item.label }}</slot>
+            </div>
+          </td>
+          <td
+            v-if="item.prop"
+            class="tb_td"
+            :rowspan="item.rowspan"
+            :colspan="item.colspan"
+            :key="`${index}-${inx}-prop`"
+          >
+            <div class="cell">
+              <slot :name="item.prop">{{ detail[item.prop] }}</slot>
+            </div>
+          </td>
+        </template>
+      </tr>
+    </table>
+  </div>
+</template>
+
 <script>
 export default {
   name: "check-detail-last",
@@ -19,31 +57,34 @@ export default {
   },
   data() {
     return {
-      maxRows: 4,
+      newColumns: [],
     };
   },
+  created() {
+    this.newColumns = this.formatColumns(this.columns);
+  },
   methods: {
-    createTds({ label, prop, rowspan, colspan }, cols) {
+    formatColumns(columns) {
       const result = [];
-      if (label) {
-        result.push(
-          <td class="tb_th" rowspan={rowspan} colspan={1}>
-            <div class="cell">{this.$scopedSlots[label]?.() || label}</div>
-          </td>
-        );
-        cols--;
+      for (const items of columns) {
+        const isNest = items.some((it) => it.children?.length);
+        if (isNest) {
+          const tds = items.map((item) => this.toFlat(item, item.grids));
+          result.push(...this.mergeItems(tds));
+        } else {
+          const averageGrids = this.getAverageGrids(this.baseGrids, items);
+          result.push(
+            items.map((item, inx) => {
+              const curGrid = averageGrids[inx];
+              return {
+                ...item,
+                colspan: item.colspan || (item.label ? curGrid - 1 : curGrid),
+              };
+            })
+          );
+        }
       }
-      if (prop) {
-        const curColspan = colspan || cols;
-        result.push(
-          <td class="tb_td" rowspan={rowspan} colspan={curColspan}>
-            <div class="cell">
-              {this.$scopedSlots[prop]?.() || this.detail[prop]}
-            </div>
-          </td>
-        );
-      }
-      return result ?? (result.length === 1 ? result[0] : result);
+      return result;
     },
     toFlat(item, grids = this.baseGrids) {
       const result = [];
@@ -51,28 +92,23 @@ export default {
       let preLabel = null;
 
       if (label) {
-        preLabel = (
-          <td
-            class="tb_th"
-            rowspan={rowspan || this.getMaxRows(children)}
-            colspan={1} 
-          >
-            <div class="cell">{this.$scopedSlots[label]?.() || label}</div>
-          </td>
-        );
+        preLabel = {
+          label,
+          rowspan: rowspan || this.getMaxRows(children),
+        };
         grids--;
-      } 
+      }
 
       for (const subItem of this.getFullChild(item.children)) {
-        const { prop, children } = subItem;
+        const { prop, label, children } = subItem;
         if (prop) {
           const tds = [];
           if (preLabel) {
             tds.push(preLabel);
             preLabel = null;
           }
-          const subTds = this.createTds(subItem, grids);
-          result.push(tds.concat(subTds));
+          tds.push({ ...subItem, colspan: label ? grids - 1 : grids });
+          result.push(tds);
         } else if (children) {
           result.push(...this.toFlat(subItem, grids));
         } else {
@@ -81,7 +117,7 @@ export default {
       }
       return result;
     },
-    mergeTds(foldTds) {
+    mergeItems(foldTds) {
       const maxRow = Math.max(...foldTds.map((item) => item.length));
       const groupTds = [];
 
@@ -93,23 +129,6 @@ export default {
         groupTds.push(rowTds);
       }
       return groupTds;
-    },
-    getMaxRows(srcList = [], account = 0) {
-      for (const item of srcList) {
-        account++;
-        if (item.children?.length) {
-          return this.getMaxRows(item.children, account);
-        }
-      }
-      return account;
-    },
-    getFullChild(children) {
-      return children.reduce((pre, cur) => {
-        if (cur.prop && cur.rowspan) {
-          return pre.concat(cur, ...new Array(cur.rowspan - 1).fill({}));
-        }
-        return pre.concat(cur);
-      }, []);
     },
     // 自动计算栅格
     getAverageGrids(total, items) {
@@ -138,39 +157,23 @@ export default {
       }
       return baseGrids;
     },
-  },
-  render() {
-    return (
-      <div class="check-detail">
-        <table
-          class="detail"
-          border="0"
-          cellspacing="0"
-          cellpadding="0"
-          width="100%"
-        >
-          {this.columns.map((items, index) => {
-            const isNest = items.some((item) => item.children?.length);
-            // 是否为嵌套类型
-            if (isNest) {
-              const tds = items.map((item) => this.toFlat(item, item.grids));
-              console.log(tds);
-              return this.mergeTds(tds).map((tds, inx) => (
-                <tr key={`${index}${inx}`}>{tds}</tr>
-              ));
-            }
-            const averageGrids = this.getAverageGrids(this.baseGrids, items);
-            return (
-              <tr key={index}>
-                {items
-                  .map((it, i) => this.createTds(it, averageGrids[i]))
-                  .flat()}
-              </tr>
-            );
-          })}
-        </table>
-      </div>
-    );
+    getFullChild(children) {
+      return children.reduce((pre, cur) => {
+        if (cur.prop && cur.rowspan) {
+          return pre.concat(cur, ...new Array(cur.rowspan - 1).fill({}));
+        }
+        return pre.concat(cur);
+      }, []);
+    },
+    getMaxRows(srcList = [], account = 0) {
+      for (const item of srcList) {
+        account++;
+        if (item.children?.length) {
+          return this.getMaxRows(item.children, account);
+        }
+      }
+      return account;
+    },
   },
 };
 </script>
