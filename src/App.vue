@@ -25,7 +25,9 @@
 // import Test from './components/test-cacsder/test.vue'
 // import Test from './components/check-details/test.vue'
 // import Test from './components/uploadTable/test'
-import Test from './components/knowledgeManage/browse/index'
+// import Test from './components/knowledgeManage/browse/index'
+// import Test from './components/file-pewview/word.vue';
+import Test from './components/knowledgeManage/manage/index';
 export default {
   name: 'App',
   components: {
