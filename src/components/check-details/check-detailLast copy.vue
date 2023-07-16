@@ -3,31 +3,27 @@
 export default {
   name: "check-detail-last",
   props: {
-    columns: { // 表格字段名数据
+    columns: {
       type: Array,
       default: () => [],
       required: true,
     },
-    detail: { // 数据
+    detail: {
       type: Object,
       default: () => ({}),
     },
-    baseGrids: { // 表格的栅格数
+    baseGrids: {
       type: Number,
       default: 8,
     },
-    isRequired: { // 表单存在必填
+    isRequired: {
       type: Boolean,
-      default: false,
+      default: true,
     },
-    hideAfter: { // 校验提示自动隐藏的延时
-      type: Number,
-      default: 4000,
-    }
   },
   data() {
     return {
-      
+      maxRows: 4,
     };
   },
   directives: {
@@ -42,24 +38,24 @@ export default {
     },
   },
   methods: {
-    createTds(item, { cols, rows }) {
+    createTds(item, cols) {
       const { label, prop, rowspan, colspan, required } = item;
       const result = [];
       if (label) {
         result.push(
-          <td class="tb_th" rowspan={rowspan || rows || 1} colspan={1}>
-            <div class={`cell ${this.isRequired && required ? "isRequired" : ""}`}>
+          <td class="tb_th" rowspan={rowspan} colspan={1}>
+            <div class={`cell ${required ? "isRequired" : ""}`}>
               {this.$scopedSlots[label]?.() || label}
             </div>
           </td>
         );
-        if (cols) cols--;
+        cols--;
       }
       if (prop) {
-        const curColspan = colspan || cols || 1;
+        const curColspan = colspan || cols;
         result.push(
           <td class="tb_td" rowspan={rowspan} colspan={curColspan}>
-            {this.getFormItem(
+            {this.setFormItem(
               item,
               <div class="cell">
                 {this.$scopedSlots[prop]?.() || this.detail[prop]}
@@ -70,38 +66,44 @@ export default {
       }
       return result ?? (result.length === 1 ? result[0] : result);
     },
-    toFlat(item, grids = this.baseGrids) {
+    toFlat(item, grids = this.baseGrids, autoRows) {
       const result = [];
       const label = item.label;
-      let count = 0;
+      let preLabel = null;
 
-      if (label) grids--;
-
+      if (label) {
+        preLabel = (
+          <td
+            class="tb_th"
+            rowspan={item.rowspan || autoRows[label]}
+            colspan={1}
+          >
+            <div class="cell">{this.$scopedSlots[label]?.() || label}</div>
+          </td>
+        );
+        grids--;
+      }
       for (const subItem of this.getFullChild(item.children)) {
         const { prop, children } = subItem;
         if (prop) {
-          count++;
-          result.push(this.createTds(subItem, { cols: grids }));
+          const tds = [];
+          if (preLabel) {
+            tds.push(preLabel);
+            preLabel = null;
+          }
+          const subTds = this.createTds(subItem, grids);
+          result.push(tds.concat(subTds));
         } else if (children) {
-          const { result: subTds, count: subCount } = this.toFlat(
-            subItem,
-            grids
-          );
-          count += subCount;
-          result.push(...subTds);
+          result.push(...this.toFlat(subItem, grids, autoRows));
         } else {
           result.push(null);
         }
       }
-
-      if (label && result?.length) {
-        result[0].unshift(this.createTds(item, { rows: count }));
-      }
-
-      return { result, count };
+      console.log(result);
+      return result;
     },
     mergeTds(groupTds) {
-      const maxRow = Math.max(...groupTds.map((items) => items.length));
+      const maxRow = Math.max(...groupTds.map((item) => item.length));
       const newGroupTds = [];
 
       for (let i = 0; i < maxRow; i++) {
@@ -112,6 +114,21 @@ export default {
         newGroupTds.push(rowTds);
       }
       return newGroupTds;
+    },
+    getMaxRows(curNode, counts = {}) {
+      let account = 0;
+      for (const item of curNode.children) {
+        if (item.children?.length) {
+          account += this.getMaxRows(item, counts).account;
+        } else {
+          account++;
+        }
+      }
+      counts[curNode.label] = account;
+      return {
+        account,
+        counts,
+      };
     },
     getFullChild(children) {
       return children.reduce((pre, cur) => {
@@ -149,7 +166,7 @@ export default {
       }
       return baseGrids;
     },
-    getForm(content) {
+    setForm(content) {
       if (this.isRequired) {
         return (
           <el-form
@@ -165,9 +182,9 @@ export default {
       }
       return content;
     },
-    getFormItem(item, content) {
+    setFormItem(item, content) {
       const { prop, required, customTip } = item;
-      if (this.isRequired && required) {
+      if (required) {
         let rules;
         if (Object.prototype.toString.call(customTip) === "[object Object]") {
           rules = [customTip];
@@ -204,7 +221,7 @@ export default {
     },
   },
   render() {
-    return this.getForm(
+    return this.setForm(
       <div class="check-detail">
         <table
           class="detail"
@@ -219,14 +236,13 @@ export default {
             if (isNest) {
               let maxRowspan = 0;
               const groupTds = items.map((item) => {
-                if (!item.rowspan && maxRowspan) {
+                const { account, counts } = this.getMaxRows(item);
+                if (account > maxRowspan) {
+                  maxRowspan = account;
+                } else {
                   item.rowspan = maxRowspan;
                 }
-                const { result, count } = this.toFlat(item, item.grids);
-                if (count > maxRowspan) {
-                  maxRowspan = count;
-                }
-                return result;
+                return this.toFlat(item, item.grids, counts);
               });
               return this.mergeTds(groupTds).map((tds, inx) => (
                 <tr key={`${index}${inx}`}>{tds}</tr>
@@ -236,7 +252,7 @@ export default {
             return (
               <tr key={index}>
                 {items
-                  .map((it, i) => this.createTds(it, { cols: averageGrids[i] }))
+                  .map((it, i) => this.createTds(it, averageGrids[i]))
                   .flat()}
               </tr>
             );

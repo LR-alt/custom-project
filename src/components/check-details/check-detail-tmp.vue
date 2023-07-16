@@ -102,7 +102,7 @@ export default {
       for (const subItem of this.getFullChild(item.children)) {
         const { prop, label, children } = subItem;
         if (prop) {
-          const tds = [];
+          const tds = []; 
           if (preLabel) {
             tds.push(preLabel);
             preLabel = null;

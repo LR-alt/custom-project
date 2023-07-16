@@ -23,9 +23,9 @@
 // import Test from './components/form-builder-comp/test.vue';
 // import Test from './components/drag-tabs/test.vue'; 
 // import Test from './components/test-cacsder/test.vue'
-// import Test from './components/check-details/test.vue'
+import Test from './components/check-details/test.vue'
 // import Test from './components/uploadTable/test'
-import Test from './components/knowledgeManage/browse/index'
+// import Test from './components/knowledgeManage/browse/index'
 export default {
   name: 'App',
   components: {

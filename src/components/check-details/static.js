@@ -16,7 +16,7 @@ const affairColsLast = [
     { prop: 'creator', label: 'creator' },
   ],
   [
-    { prop: 'affairType', label: '事物类型' },
+    { prop: 'affairType', label: '事物类型', required: true },
   ],
   [
     { prop: 'isEffect', label: '是否立即失效' }
@@ -29,7 +29,6 @@ const affairColsLast = [
       label: '详情1',
       grids: 5,
       children: [
-        { prop: 'sub1' },
         {
           label: '详情1-2',
           children: [
@@ -38,12 +37,12 @@ const affairColsLast = [
           ]
         },
         { label: '详情1-3', prop: 'sub3' },
+        { prop: 'sub1' },
       ]
     },
     {
       label: '详情2',
       grids: 3,
-      rowspan: 4,
       children: [
         { label: '详情2-1', prop: 'sub4', rowspan: 2 },
         { label: '详情2-2', prop: 'sub5', rowspan: 2 },
@@ -51,7 +50,7 @@ const affairColsLast = [
     },
   ],
   [
-    { prop: 'smsContent', label: '短信内容' }
+    { prop: 'smsContent', label: '短信内容', required: true, customTip: '短信内容不能为空' }
   ],
 ]
 
