@@ -1,11 +1,15 @@
 <template>
     <div class="manage-home">
-        知识库管理
+        <knowledgeClassify />
     </div>
 </template>
 <script>
+import knowledgeClassify from './knowledgeClassify.vue';
 export default {
     name: 'manage-home',
+    components: {
+        knowledgeClassify,
+    },
     data() {
         return {}
     },
