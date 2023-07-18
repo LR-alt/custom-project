@@ -29,6 +29,7 @@ const affairColsLast = [
       label: '详情1',
       grids: 5,
       children: [
+        { prop: 'sub1' },
         {
           label: '详情1-2',
           children: [
@@ -37,7 +38,6 @@ const affairColsLast = [
           ]
         },
         { label: '详情1-3', prop: 'sub3' },
-        { prop: 'sub1' },
       ]
     },
     {
@@ -50,7 +50,11 @@ const affairColsLast = [
     },
   ],
   [
-    { prop: 'smsContent', label: '短信内容', required: true, customTip: '短信内容不能为空' }
+    { 
+      prop: 'smsContent', 
+      label: '短信内容', 
+      rules: [{ required: true, message: '短信内容不能为空' }],
+    }
   ],
 ]
 

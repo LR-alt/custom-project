@@ -5,7 +5,7 @@
 			<el-input
 				v-model="detail.affairType"
 				type="text"
-				placeholder="请输入事务类型"
+				placeholder="请输入"
 				clearable
 			/>
 		</template>
@@ -29,12 +29,11 @@
 				v-model="detail.smsContent"
 				type="textarea"
 				:rows="4"
-				placeholder="请输入事务类型"
+				placeholder="请输入"
 				clearable
 			/>
 		</template>
 	</checkDetail>
-	<!-- <chart /> -->
 </template>
 <script>
 	import { affairColsLast } from './static';

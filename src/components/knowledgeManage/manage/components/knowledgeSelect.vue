@@ -1,18 +1,20 @@
 <template>
-    <div class="statistics-home">
-        t-tab
+    <div class="knowledge-select">
+        
     </div>
 </template>
 <script>
 export default {
-    name: 'statistics-home',
+    name: 'knowledge-select',
     data() {
-        
+        return {
+                
+        }
     },
     created() {},
 };
 </script>
 <style lang="less" scoped>
-.statistics-home {
+.knowledge-select {
 }
 </style>
