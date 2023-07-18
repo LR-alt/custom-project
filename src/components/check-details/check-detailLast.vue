@@ -18,7 +18,7 @@ export default {
     },
     isRequired: { // 表单存在必填
       type: Boolean,
-      default: false,
+      default: true,
     },
     hideAfter: { // 校验提示自动隐藏的延时
       type: Number,
@@ -32,24 +32,24 @@ export default {
   },
   directives: {
     hidden: {
-      inserted(el) {
+      bind(el, binding) {
         let timer = setTimeout(() => {
           el.style.display = "none";
           clearTimeout(timer);
           timer = null;
-        }, 4000);
+        }, binding.value);
       },
     },
   },
   methods: {
     createTds(item, { cols, rows }) {
-      const { label, prop, rowspan, colspan, required } = item;
+      const { label, prop, rowspan, colspan, rules } = item;
       const result = [];
       if (label) {
         result.push(
           <td class="tb_th" rowspan={rowspan || rows || 1} colspan={1}>
-            <div class={`cell ${this.isRequired && required ? "isRequired" : ""}`}>
-              {this.$scopedSlots[label]?.() || label}
+            <div class={`cell ${this.isRequired && rules ? "isRequired" : ""}`}>
+              {this.$slots[label] || label}
             </div>
           </td>
         );
@@ -62,7 +62,7 @@ export default {
             {this.getFormItem(
               item,
               <div class="cell">
-                {this.$scopedSlots[prop]?.() || this.detail[prop]}
+                {this.$slots[prop] || this.detail[prop]}
               </div>
             )}
           </td>
@@ -166,18 +166,8 @@ export default {
       return content;
     },
     getFormItem(item, content) {
-      const { prop, required, customTip } = item;
-      if (this.isRequired && required) {
-        let rules;
-        if (Object.prototype.toString.call(customTip) === "[object Object]") {
-          rules = [customTip];
-        } else if (Array.isArray(customTip)) {
-          rules = customTip;
-        } else if (typeof customTip === "string") {
-          rules = [{ required: true, message: customTip }];
-        } else {
-          rules = [{ required: true, message: "必填" }];
-        }
+      const { prop, rules } = item;
+      if (this.isRequired && rules) {
         return (
           <el-form-item
             prop={prop}
@@ -186,7 +176,7 @@ export default {
               error: ({ error }) => (
                 <span
                   class="custom-error"
-                  {...{ directives: [{ name: "hidden" }] }}
+                  {...{ directives: [{ name: "hidden", value: this.hideAfter }] }}
                 >
                   {error}
                 </span>
@@ -257,8 +247,8 @@ export default {
     .tb_td {
       padding: 8px 0;
       font-size: 14px;
-      border-right: 1px solid #ebeef5;
-      border-bottom: 1px solid #ebeef5;
+      border-right: 1px solid #dedede;
+      border-bottom: 1px solid #dedede;
     }
     .tb_th {
       font-weight: bold;
